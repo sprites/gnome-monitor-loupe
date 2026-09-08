@@ -8,6 +8,17 @@ edges and with displays arranged above, below or to the left of each other.
 
 ![Monitor Loupe on GNOME Extensions](docs/preview.png)
 
+## Why Monitor Loupe
+
+Monitor Loupe is designed for people who work with large or multiple displays:
+
+- **Large, adjustable lens:** choose the width and height independently, up to
+  the available monitor size.
+- **True multi-monitor behavior:** the lens follows the pointer to the monitor
+  it is currently on, including mixed layouts and different display sizes.
+- **Precise bounds:** both the visible lens window and the magnified source area
+  are clamped to that monitor, so content never spills across a display edge.
+
 ## Settings preview
 
 ![Monitor Loupe preferences in German](docs/preferences-de.png)
