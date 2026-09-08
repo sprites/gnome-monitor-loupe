@@ -1,0 +1,10 @@
+{
+  "uuid": "monitor-loupe@sprites.github.io",
+  "name": "Monitor Loupe",
+  "description": "A pointer-following GNOME magnifier that stays on the current monitor. Adjustable lens size, keyboard shortcuts, zoom steps and optional Super+Alt+scroll zoom.",
+  "shell-version": ["50"],
+  "settings-schema": "org.gnome.shell.extensions.monitor-loupe",
+  "gettext-domain": "monitor-loupe",
+  "url": "https://github.com/sprites/gnome-monitor-loupe",
+  "version": 1
+}

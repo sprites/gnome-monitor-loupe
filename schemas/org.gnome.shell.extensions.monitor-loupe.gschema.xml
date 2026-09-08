@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.monitor-loupe" path="/org/gnome/shell/extensions/monitor-loupe/">
+    <key name="lens-width" type="i">
+      <default>640</default>
+      <range min="160" max="7680"/>
+      <summary>Lens width in logical pixels</summary>
+    </key>
+    <key name="lens-height" type="i">
+      <default>360</default>
+      <range min="90" max="4320"/>
+      <summary>Lens height in logical pixels</summary>
+    </key>
+    <key name="scroll-zoom" type="b">
+      <default>true</default>
+      <summary>Zoom with Super+Alt and the scroll wheel</summary>
+    </key>
+    <key name="zoom-step" type="d">
+      <default>0.25</default>
+      <range min="0.05" max="5.0"/>
+      <summary>Magnification added or removed per zoom step</summary>
+    </key>
+    <key name="loupe-zoom-in" type="as">
+      <default>[]</default>
+      <summary>Shortcut to zoom in using the configured step</summary>
+    </key>
+    <key name="loupe-zoom-out" type="as">
+      <default>[]</default>
+      <summary>Shortcut to zoom out using the configured step</summary>
+    </key>
+  </schema>
+</schemalist>
