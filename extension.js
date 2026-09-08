@@ -101,6 +101,16 @@ export default class MonitorLoupe extends Extension {
         // even when the pointer is over a Wayland client.
         this._scrollId = global.stage.connect('captured-event', (_stage, event) =>
             this._onEvent(event));
+        // Events over application windows are forwarded by GNOME's compositor
+        // to this handler instead of the stage signal above.
+        this._originalWorkspaceScroll = Main.wm.handleWorkspaceScroll;
+        this._workspaceScrollHandler = event => {
+            const result = this._onEvent(event);
+            if (result === Clutter.EVENT_STOP)
+                return result;
+            return this._originalWorkspaceScroll?.call(Main.wm, event) ?? result;
+        };
+        Main.wm.handleWorkspaceScroll = this._workspaceScrollHandler;
     }
 
     _onEvent(event) {
@@ -165,6 +175,10 @@ export default class MonitorLoupe extends Extension {
     }
 
     disable() {
+        if (Main.wm.handleWorkspaceScroll === this._workspaceScrollHandler)
+            Main.wm.handleWorkspaceScroll = this._originalWorkspaceScroll;
+        this._workspaceScrollHandler = null;
+        this._originalWorkspaceScroll = null;
         if (this._scrollId)
             global.stage.disconnect(this._scrollId);
         this._scrollId = 0;

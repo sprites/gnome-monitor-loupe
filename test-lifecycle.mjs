@@ -74,6 +74,7 @@ const Main = {
     layoutManager: layout,
     magnifier: {getZoomRegions: () => [region]},
     wm: {
+        handleWorkspaceScroll: event => { Main.workspaceFallback = event; return 'fallback'; },
         addKeybinding: (key, _settings, _flags, _mode, callback) => keys.set(key, callback),
         removeKeybinding: key => keys.delete(key),
     },
@@ -103,6 +104,7 @@ const scroll = (direction, state = 5, dy = 0, dx = 0) => stage.emit('captured-ev
 
 extension.enable();
 assert.equal(keys.size, 2);
+assert.notEqual(Main.wm.handleWorkspaceScroll, Main.wm.handleWorkspaceScroll.__original);
 assert.equal(region.viewport.width, 640);
 settings.values['lens-width'] = 900;
 settings.emit('changed', 'lens-width');
@@ -117,15 +119,21 @@ assert.equal(a11y.values['screen-magnifier-enabled'], false);
 assert.equal(scroll(0), true);
 assert.equal(a11y.values['screen-magnifier-enabled'], true);
 assert.equal(magnifierSettings.values['mag-factor'], 1.25);
-keys.get('loupe-zoom-in')();
+const workspaceHandler = Main.wm.handleWorkspaceScroll;
+assert.equal(workspaceHandler({type: () => 1, get_state: () => 5,
+    get_scroll_direction: () => 0, get_scroll_delta: () => [0, 1], get_time: () => 1}), true,
+    'Events forwarded by GNOME over application windows must zoom');
 assert.equal(magnifierSettings.values['mag-factor'], 1.5);
+keys.get('loupe-zoom-in')();
+assert.equal(magnifierSettings.values['mag-factor'], 1.75);
 settings.values['zoom-step'] = 0.5;
 scroll(0);
-assert.equal(magnifierSettings.values['mag-factor'], 2);
+assert.equal(magnifierSettings.values['mag-factor'], 2.25);
+scroll(1);
 scroll(1);
 scroll(1);
 assert.equal(a11y.values['screen-magnifier-enabled'], false);
-assert.equal(magnifierSettings.values['mag-factor'], 1.5, 'Keep a usable factor for the system toggle');
+assert.equal(magnifierSettings.values['mag-factor'], 1.25, 'Keep a usable factor for the system toggle');
 scroll(1);
 assert.equal(a11y.values['screen-magnifier-enabled'], false);
 
@@ -149,6 +157,7 @@ assert.equal(region._lensMode, true);
 assert.equal(region._clampScrollingAtEdges, true);
 failROI = false;
 extension.disable();
+assert.equal(Main.wm.handleWorkspaceScroll({}), 'fallback');
 assert.equal(stage.handlers.size, 0);
 assert.equal(layout.handlers.size, 0);
 assert.equal(settings.handlers.size, 0);
