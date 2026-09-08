@@ -1,0 +1,83 @@
+msgid ""
+msgstr "Project-Id-Version: monitor-loupe 0.2.0\nReport-Msgid-Bugs-To: https://github.com/sprites/gnome-monitor-loupe/issues\nPO-Revision-Date: 2026-09-08 22:00+0200\nLast-Translator: sprites\nLanguage-Team: German\nLanguage: de\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "Lens size"
+msgstr "Lupenfenster"
+
+msgid "Logical pixels. The lens is automatically limited to the current monitor."
+msgstr "Logische Pixel. Die Lupe wird automatisch auf den aktuellen Monitor begrenzt."
+
+msgid "Width"
+msgstr "Breite"
+
+msgid "Height"
+msgstr "Höhe"
+
+msgid "Zoom"
+msgstr "Vergrößerung"
+
+msgid "Super + Alt + scroll wheel"
+msgstr "Super + Alt + Mausrad"
+
+msgid "Scroll up to zoom in, down to zoom out. Use only one scroll-zoom extension at a time."
+msgstr "Nach oben vergrößern, nach unten verkleinern. Nur eine Erweiterung gleichzeitig für Mausrad-Zoom verwenden."
+
+msgid "Zoom step"
+msgstr "Zoomschritt"
+
+msgid "Added per step: 0.25 means 2× → 2.25×. Zooming out to 1× turns the lens off. Maximum: 32×."
+msgstr "Zuwachs pro Schritt: 0,25 bedeutet 2× → 2,25×. Bei 1× wird die Lupe ausgeschaltet. Maximum: 32×."
+
+msgid "Keyboard shortcuts"
+msgstr "Tastenkombinationen"
+
+msgid "Click a shortcut and press the new combination. Backspace disables it; Escape cancels."
+msgstr "Kürzel anklicken und die neue Kombination drücken. Rücktaste deaktiviert, Escape bricht ab."
+
+msgid "Toggle magnifier"
+msgstr "Lupe ein-/ausschalten"
+
+msgid "GNOME system shortcut. Changes also apply when this extension is disabled."
+msgstr "Systemweites GNOME-Kürzel. Änderungen gelten auch bei deaktivierter Erweiterung."
+
+msgid "Zoom in"
+msgstr "Vergrößern"
+
+msgid "Zoom out"
+msgstr "Verkleinern"
+
+msgid "Uses the zoom step above."
+msgstr "Verwendet den oben eingestellten Zoomschritt."
+
+msgid "GNOME zoom in"
+msgstr "GNOME-Vergrößern"
+
+msgid "GNOME zoom out"
+msgstr "GNOME-Verkleinern"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Existing system zoom shortcuts"
+msgstr "Vorhandene System-Zoomkürzel"
+
+msgid "GNOME’s own zoom-in/out shortcuts keep their system step. Assign different shortcuts here to use Monitor Loupe’s step."
+msgstr "GNOMEs eigene Zoomkürzel behalten ihre Schrittweite. Hier andere Kürzel vergeben, um den Zoomschritt von Monitor Loupe zu verwenden."
+
+msgid "Reset extension settings"
+msgstr "Erweiterung zurücksetzen"
+
+msgid "The GNOME system shortcut is not reset."
+msgstr "Das systemweite GNOME-Kürzel wird nicht zurückgesetzt."
+
+msgid "Press your new shortcut"
+msgstr "Neue Tastenkombination drücken"
+
+msgid "Use Ctrl, Alt or Super together with a key."
+msgstr "Strg, Alt oder Super zusammen mit einer Taste verwenden."
+
+msgid "Already used by:"
+msgstr "Bereits verwendet von:"
