@@ -6,6 +6,10 @@ edges and with displays arranged above, below or to the left of each other.
 
 [Deutsche Anleitung](README.de.md)
 
+![Monitor Loupe on GNOME Extensions](docs/preview.png)
+
+## Settings preview
+
 ![Monitor Loupe preferences in German](docs/preferences-de.png)
 
 ## Controls and preferences
