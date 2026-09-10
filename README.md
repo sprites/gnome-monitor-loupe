@@ -44,7 +44,7 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   to avoid conflicts with existing desktop shortcuts. Backspace clears a shortcut;
   Escape cancels editing. Choose combinations not already used by another app.
 - **Lens width and height** are adjustable in logical pixels, initially
-  640 × 360. Changes apply immediately. Oversized dimensions are limited to the
+  1000 × 650. Changes apply immediately. Oversized dimensions are limited to the
   current monitor; physical pixel size follows the display scaling.
 - **Reset extension settings** restores these defaults, without changing the
   system toggle shortcut.
