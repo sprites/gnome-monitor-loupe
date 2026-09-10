@@ -24,7 +24,7 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   Zoomschritt. Zunächst sind keine belegt, um bestehende Kürzel zu erhalten.
   Kürzel anklicken und die neue Kombination drücken. Rücktaste deaktiviert,
   Escape bricht ab. Eine noch freie Kombination wählen.
-- **Breite/Höhe:** standardmäßig 640 × 360 logische Pixel. Änderungen werden
+- **Breite/Höhe:** standardmäßig 1000 × 650 logische Pixel. Änderungen werden
   sofort übernommen. Die Lupe wird höchstens so groß wie der aktuelle Monitor.
 - **Zurücksetzen:** stellt die Erweiterungswerte wieder her. Das systemweite
   Ein/Aus-Kürzel bleibt erhalten.

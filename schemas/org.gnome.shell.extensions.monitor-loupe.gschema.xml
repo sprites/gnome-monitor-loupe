@@ -2,12 +2,12 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.monitor-loupe" path="/org/gnome/shell/extensions/monitor-loupe/">
     <key name="lens-width" type="i">
-      <default>640</default>
+      <default>1000</default>
       <range min="160" max="7680"/>
       <summary>Lens width in logical pixels</summary>
     </key>
     <key name="lens-height" type="i">
-      <default>360</default>
+      <default>650</default>
       <range min="90" max="4320"/>
       <summary>Lens height in logical pixels</summary>
     </key>
