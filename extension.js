@@ -33,6 +33,9 @@ export default class MonitorLoupe extends Extension {
         this._scrollRemainder = 0;
         this._lastScrollTime = 0;
         this._addIndicator();
+        this._indicatorVisibilityId = this._a11y.connect(
+            'changed::screen-magnifier-enabled', () => this._updateIndicatorVisibility());
+        this._updateIndicatorVisibility();
         this._region = Main.magnifier.getZoomRegions()[0];
         const region = this._region;
         if (!region || typeof region._changeROI !== 'function' ||
@@ -176,6 +179,11 @@ export default class MonitorLoupe extends Extension {
         Main.panel.addToStatusArea(this.uuid, this._indicator);
     }
 
+    _updateIndicatorVisibility() {
+        if (this._indicator)
+            this._indicator.visible = this._a11y.get_boolean('screen-magnifier-enabled');
+    }
+
     _clearAppearance() {
         if (this._appearanceActor) {
             if (this._shapeEffect)
@@ -278,6 +286,9 @@ export default class MonitorLoupe extends Extension {
     disable() {
         this._indicator?.destroy();
         this._indicator = null;
+        if (this._indicatorVisibilityId)
+            this._a11y.disconnect(this._indicatorVisibilityId);
+        this._indicatorVisibilityId = 0;
         if (Main.wm.handleWorkspaceScroll === this._workspaceScrollHandler)
             Main.wm.handleWorkspaceScroll = this._originalWorkspaceScroll;
         this._workspaceScrollHandler = null;
