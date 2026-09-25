@@ -1,4 +1,6 @@
 dist/
+!dist/release-candidates/
+dist/release-candidates/*/
 schemas/gschemas.compiled
 locale/
 *.zip
