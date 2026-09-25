@@ -170,7 +170,7 @@ export default class MonitorLoupe extends Extension {
             return;
         this._indicator = new PanelMenu.Button(0.0, 'Monitor Loupe');
         this._indicator.add_child(new St.Icon({
-            gicon: Gio.FileIcon.new(Gio.file_new_for_path(`${this.path}/monitor-loupe-symbolic.svg`)),
+            gicon: Gio.FileIcon.new(Gio.file_new_for_path(`${this.path}/monitor-loupe.svg`)),
             icon_size: 24,
             style_class: 'system-status-icon',
         }));

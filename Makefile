@@ -11,7 +11,7 @@ test:
 
 pack: test
 	mkdir -p dist
-	gnome-extensions pack --force --extra-source=geometry.js --extra-source=zoom.js --extra-source=appearance.js --extra-source=color.js --extra-source=monitor-loupe-symbolic.svg --extra-source=LICENSE --podir=po --out-dir=dist .
+	gnome-extensions pack --force --extra-source=geometry.js --extra-source=zoom.js --extra-source=appearance.js --extra-source=color.js --extra-source=monitor-loupe.svg --extra-source=LICENSE --podir=po --out-dir=dist .
 
 release-candidate:
 	python3 tools/release.py candidate
