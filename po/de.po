@@ -13,8 +13,8 @@ msgstr "Logische Pixel. Mit 0 wird der Rahmen des Rechtecks ausgeblendet."
 msgid "Frame and symbol color"
 msgstr "Rahmen- und Symbolfarbe"
 
-msgid "Applies to all shapes, including the magnifying glass handle."
-msgstr "Gilt für alle Formen, einschließlich des Lupengriffs."
+msgid "Colors all four symbols and the lens frame and handle."
+msgstr "Färbt alle vier Symbole sowie den Lupenrahmen und -griff."
 
 msgid "Lens appearance"
 msgstr "Lupenansicht"

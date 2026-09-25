@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 import Adw from 'gi://Adw';
+import Cairo from 'cairo';
 import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
@@ -30,6 +31,7 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
             margin_start: 8, margin_end: 8,
         });
         let updatingShape = false;
+        const shapeAreas = [];
         const shapeButtons = shapes.map((value, index) => {
             const button = new Gtk.ToggleButton({hexpand: true, tooltip_text: titles[index]});
             button.update_property([Gtk.AccessibleProperty.LABEL], [titles[index]]);
@@ -37,10 +39,11 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
                 orientation: Gtk.Orientation.VERTICAL, spacing: 8,
                 margin_top: 12, margin_bottom: 12,
             });
-            content.append(new Gtk.Image({
-                gicon: new Gio.FileIcon({file: this.dir.get_child('icons').get_child(`${value}.svg`)}),
-                pixel_size: 64,
-            }));
+            const symbol = new Gtk.DrawingArea({content_width: 64, content_height: 64});
+            symbol.set_draw_func((_area, cr, width, height) =>
+                this._drawShapeSymbol(cr, width, height, value, settings));
+            shapeAreas.push(symbol);
+            content.append(symbol);
             content.append(new Gtk.Label({
                 label: titles[index], wrap: true, justify: Gtk.Justification.CENTER,
                 height_request: 36,
@@ -64,7 +67,7 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         border.subtitle = _('Logical pixels. Set to 0 to hide the rectangle frame.');
         const colorRow = new Adw.ActionRow({
             title: _('Frame and symbol color'),
-            subtitle: _('Applies to all shapes, including the magnifying glass handle.'),
+            subtitle: _('Colors all four symbols and the lens frame and handle.'),
         });
         const colorButton = new Gtk.ColorDialogButton({
             dialog: new Gtk.ColorDialog({title: _('Frame and symbol color'), with_alpha: false}),
@@ -79,6 +82,8 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
             colorButton.rgba = rgba;
             updatingColor = false;
             colorButton.sensitive = settings.is_writable('frame-color');
+            for (const area of shapeAreas)
+                area.queue_draw();
         };
         updateColor();
         colorButton.connect('notify::rgba', () => {
@@ -189,6 +194,43 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         settings.bind(key, row, 'value', Gio.SettingsBindFlags.DEFAULT);
         group.add(row);
         return row;
+    }
+
+    _drawShapeSymbol(cr, width, height, shape, settings) {
+        const rgba = new Gdk.RGBA();
+        rgba.parse(frameColor(settings.get_string('frame-color')));
+        cr.save();
+        cr.scale(width / 160, height / 160);
+        cr.setSourceRGBA(rgba.red, rgba.green, rgba.blue, 1);
+        cr.setLineWidth(8);
+        cr.setLineCap(Cairo.LineCap.ROUND);
+        cr.setLineJoin(Cairo.LineJoin.ROUND);
+        if (shape === 'rectangle') {
+            cr.rectangle(20, 36, 120, 88);
+            cr.stroke();
+        } else if (shape === 'loupe') {
+            cr.arc(67, 67, 45, 0, Math.PI * 2);
+            cr.stroke();
+            cr.setLineWidth(16);
+            cr.moveTo(101, 101);
+            cr.lineTo(137, 137);
+            cr.stroke();
+        } else if (shape === 'binoculars') {
+            cr.moveTo(80, 42);
+            cr.curveTo(48, 7, 3, 35, 8, 80);
+            cr.curveTo(12, 123, 55, 137, 80, 102);
+            cr.curveTo(105, 137, 148, 123, 152, 80);
+            cr.curveTo(157, 35, 112, 7, 80, 42);
+            cr.closePath();
+            cr.stroke();
+        } else {
+            cr.arc(80, 80, 60, 0, Math.PI * 2);
+            cr.stroke();
+            cr.setLineWidth(2);
+            cr.arc(80, 80, 46, 0, Math.PI * 2);
+            cr.stroke();
+        }
+        cr.restore();
     }
 
     _capture(parent, binding, reserved) {
