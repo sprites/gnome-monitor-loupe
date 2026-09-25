@@ -17,6 +17,8 @@ bleibt. Auch der vergrößerte Quellbereich bleibt innerhalb dieses Monitors.
 
 Die **Rahmen- und Symbolfarbe** ist für alle vier Ansichten frei wählbar. Die Lupe
 folgt dem Mauszeiger und passt sich mitsamt Rahmen und Griff an den aktuellen Monitor an.
+Wähle die Form über eines der **vier Symbolfelder ganz oben in den Einstellungen**.
+Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenregler.
 
 ## Neue Einstellungen im Bild
 
