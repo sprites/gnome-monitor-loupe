@@ -110,6 +110,7 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
                 .map(channel => Math.round(channel * 255).toString(16).padStart(2, '0')).join('');
             if (hex !== settings.get_string('frame-color'))
                 settings.set_string('frame-color', hex);
+            colorButton.popdown();
         });
         connections.push([settings, settings.connect('changed::frame-color', updateColor)]);
         colorRow.add_suffix(colorButton);
