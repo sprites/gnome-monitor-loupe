@@ -6,14 +6,25 @@ edges and with displays arranged above, below or to the left of each other.
 
 [Deutsche Anleitung](README.de.md)
 
-![Monitor Loupe on GNOME Extensions](docs/preview.png)
+## Choose your lens
+
+| Rectangle | Magnifying glass | Binoculars | Telescope |
+| :---: | :---: | :---: | :---: |
+| ![Rectangle icon](docs/icons/rectangle.svg) | ![Magnifying glass icon](docs/icons/loupe.svg) | ![Binoculars icon](docs/icons/binoculars.svg) | ![Telescope icon](docs/icons/telescope.svg) |
+| Classic rectangular view | Round lens with a handle | Two overlapping lenses | Round view with a broad rim |
+| Width, height and frame thickness | Adjustable radius | Adjustable radius per lens | Adjustable radius |
+
+*Symbols illustrate the four shapes; they are not desktop screenshots.*
+
+Choose a **frame and symbol color** for all four views. The lens follows your
+pointer and scales down to fit the current monitor, including its frame and handle.
 
 ## Why Monitor Loupe
 
 Monitor Loupe is designed for people who work with large or multiple displays:
 
-- **Large, adjustable lens:** choose the width and height independently, up to
-  the available monitor size.
+- **Four adjustable shapes:** set width and height for the rectangle or the
+  radius for round lenses. Choose the frame color and rectangle frame thickness.
 - **True multi-monitor behavior:** the lens follows the pointer to the monitor
   it is currently on, including mixed layouts and different display sizes.
 - **Precise bounds:** both the visible lens window and the magnified source area
@@ -21,7 +32,18 @@ Monitor Loupe is designed for people who work with large or multiple displays:
 
 ## Settings preview
 
-![Monitor Loupe preferences in German](docs/preferences-de.png)
+Actual captures of the current preferences window (appearance section).
+
+**Rectangle — dimensions, frame thickness and color**
+
+![Rectangle preferences with width, height, frame thickness and color](docs/preferences-en.png)
+
+**Round shapes — radius and color**
+
+![Magnifying glass preferences with radius and color](docs/preferences-round-en.png)
+
+Click the color swatch to choose a color. Set rectangle frame thickness to **0**
+to hide its border. Appearance changes apply immediately.
 
 ## Controls and preferences
 

@@ -3,6 +3,36 @@
 Eine Lupe für **GNOME Shell 50**, die dem Mauszeiger folgt und auf dessen Monitor
 bleibt. Auch der vergrößerte Quellbereich bleibt innerhalb dieses Monitors.
 
+[English documentation](README.md)
+
+## Wähle deine Lupenansicht
+
+| Rechteck | Lupe mit Griff | Feldstecher | Fernrohr |
+| :---: | :---: | :---: | :---: |
+| ![Rechteck-Symbol](docs/icons/rectangle.svg) | ![Lupen-Symbol](docs/icons/loupe.svg) | ![Feldstecher-Symbol](docs/icons/binoculars.svg) | ![Fernrohr-Symbol](docs/icons/telescope.svg) |
+| Klassische rechteckige Ansicht | Runde Linse mit Griff | Zwei überlappende Linsen | Runde Ansicht mit breitem Rahmen |
+| Breite, Höhe und Rahmendicke | Radius einstellbar | Radius pro Linse einstellbar | Radius einstellbar |
+
+*Die Symbole veranschaulichen die vier Formen; sie sind keine Desktop-Screenshots.*
+
+Die **Rahmen- und Symbolfarbe** ist für alle vier Ansichten frei wählbar. Die Lupe
+folgt dem Mauszeiger und passt sich mitsamt Rahmen und Griff an den aktuellen Monitor an.
+
+## Neue Einstellungen im Bild
+
+Aktuelle Aufnahmen des Einstellungsfensters, jeweils mit dem Bereich „Lupenansicht“.
+
+**Rechteck — Abmessungen, Rahmendicke und Farbe**
+
+![Rechteck-Einstellungen mit Breite, Höhe, Rahmendicke und Farbauswahl](docs/preferences-de.png)
+
+**Runde Formen — Radius und Farbe**
+
+![Einstellungen der Lupe mit Griff, Radius und Farbauswahl](docs/preferences-round-de.png)
+
+Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
+du den Rechteckrahmen aus. Änderungen an der Ansicht werden sofort übernommen.
+
 ## Einstellungen
 
 In der App **Erweiterungen** bei Monitor Loupe auf die Einstellungen klicken, oder:
