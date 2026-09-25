@@ -15,9 +15,10 @@ export function lensGeometry(monitors, px, py, xZoom, yZoom,
     }
     const width = Math.max(1, Math.floor(Math.min(requestedWidth, monitor.width)));
     const height = Math.max(1, Math.floor(Math.min(requestedHeight, monitor.height)));
-    const x = clamp(Math.round(px - width / 2), monitor.x, monitor.x + monitor.width - width);
-    const y = clamp(Math.round(py - height / 2), monitor.y, monitor.y + monitor.height - height);
-    // Keep the magnified pointer at its real position, including at monitor edges.
+    // Keep the pointer at the lens center. The Shell clips the portion of the
+    // lens that lies beyond the physical desktop edge.
+    const x = Math.round(px - width / 2);
+    const y = Math.round(py - height / 2);
     const zx = Math.max(1, xZoom);
     const zy = Math.max(1, yZoom);
     return {

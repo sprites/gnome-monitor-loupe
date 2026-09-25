@@ -73,6 +73,7 @@ const region = {
     _updateMagViewGeometry() {},
     _destroyActors() { this._magView = null; },
     _isFullScreen() { return true; },
+    isActive() { return false; },
     _changeROI(params) {
         if (failROI)
             throw new Error('ROI failure');
@@ -85,6 +86,7 @@ const region = {
 const originals = {...region};
 const Main = {
     actionMode: 1,
+    uiGroup: {set_opacity(value) { this.opacity = value; }},
     layoutManager: layout,
     magnifier: {getZoomRegions: () => [region]},
     wm: {
@@ -121,6 +123,8 @@ extension.enable();
 assert.equal(keys.size, 2);
 assert.notEqual(Main.wm.handleWorkspaceScroll, Main.wm.handleWorkspaceScroll.__original);
 assert.equal(region.viewport.width, 640);
+assert.equal(region.viewport.x, -310, 'Lens must stay centered while the stage clips its off-screen part');
+assert.equal(region._viewPortX, -310, 'Do not restore GNOME edge clamping after viewport updates');
 settings.values['lens-width'] = 900;
 settings.emit('changed', 'lens-width');
 assert.equal(region.viewport.width, 900, 'Resize must apply without re-enabling');
@@ -146,7 +150,7 @@ for (const shape of ['loupe', 'binoculars', 'telescope']) {
     assert.equal(actor.effects.size, 1, 'Shape changes must replace the effect');
     assert.equal([...actor.effects][0].shape, shape);
     assert.equal(region._isFullScreen(), false, 'Desktop must remain visible through the mask');
-    assert.equal(region._isMouseOverRegion(), false, 'Do not hide the system cursor in transparent corners');
+    assert.equal(region._isMouseOverRegion(), true, 'Keep the cursor centered in the lens at desktop edges');
 }
 settings.values['lens-radius'] = 60;
 settings.emit('changed', 'lens-radius');

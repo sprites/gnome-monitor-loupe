@@ -1,8 +1,8 @@
 # GNOME Monitor Loupe
 
-A pointer-following magnifier for **GNOME Shell 50**. The lens and the magnified
-source area stay inside the monitor under your pointer, including at monitor
-edges and with displays arranged above, below or to the left of each other.
+A pointer-following magnifier for **GNOME Shell 50**. At screen edges the lens
+stays centered on the pointer and GNOME clips the part beyond the visible desktop.
+At monitor transitions the lens can extend onto a neighboring display.
 
 [Deutsche Anleitung](README.de.md)
 
@@ -29,8 +29,9 @@ Monitor Loupe is designed for people who work with large or multiple displays:
   radius for round lenses. Choose the frame color and rectangle frame thickness.
 - **True multi-monitor behavior:** the lens follows the pointer to the monitor
   it is currently on, including mixed layouts and different display sizes.
-- **Precise bounds:** both the visible lens window and the magnified source area
-  are clamped to that monitor, so content never spills across a display edge.
+- **Pointer-centered at screen edges:** the lens stays centered on the pointer;
+  GNOME clips the invisible portion at physical desktop edges. At monitor
+  transitions, the lens can extend onto the neighboring display.
 
 ## Settings preview
 
@@ -132,7 +133,7 @@ make test
 make pack
 ```
 
-The installable ZIP is written to `dist/`. Tests cover monitor/source bounds,
+The installable ZIP is written to `dist/`. Tests cover monitor edge positioning,
 pointer alignment, configurable dimensions, fractional zoom steps, input handling
 and extension cleanup. Lifecycle tests use a simulated Shell boundary and do not
 replace testing on a real GNOME desktop.
