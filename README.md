@@ -21,6 +21,16 @@ pointer and scales down to fit the current monitor, including its frame and hand
 Select a shape by clicking one of the **four illustrated tiles at the top of the
 preferences**. The selected tile is highlighted; the matching size controls appear below.
 
+## See the views in motion
+
+The animation illustrates the magnified area moving across a desktop and cycles
+through all four available shapes.
+
+![Animated preview of the rectangle, magnifier, binoculars and telescope views](docs/monitor-loupe-demo.gif)
+
+*The desktop scene is an illustration, not a capture of a live GNOME session.*
+[Static PNG preview](docs/monitor-loupe-demo.png)
+
 ## Why Monitor Loupe
 
 Monitor Loupe is designed for people who work with large or multiple displays:
