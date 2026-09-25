@@ -1,10 +1,10 @@
 {
   "uuid": "monitor-loupe@sprites.github.io",
-  "name": "Monitor Loupe",
-  "description": "A pointer-following GNOME magnifier for large and multi-monitor desktops. Adjustable lens size with precise per-monitor bounds, keyboard shortcuts, zoom steps and optional Super+Alt+scroll zoom.",
+  "name": "Monitor Loupe (Bildschirmlupe)",
+  "description": "A pointer-following GNOME magnifier (Bildschirmlupe, Bildschirmvergrößerung) for large and multi-monitor desktops. Adjustable lens size with precise per-monitor bounds, keyboard shortcuts, zoom steps and optional Super+Alt+scroll zoom.",
   "shell-version": ["50"],
   "settings-schema": "org.gnome.shell.extensions.monitor-loupe",
   "gettext-domain": "monitor-loupe",
   "url": "https://github.com/sprites/gnome-monitor-loupe",
-  "version": 8
+  "version": 9
 }
