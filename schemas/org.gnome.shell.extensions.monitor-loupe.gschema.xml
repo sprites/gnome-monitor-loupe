@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema id="org.gnome.shell.extensions.monitor-loupe" path="/org/gnome/shell/extensions/monitor-loupe/">
+    <key name="lens-shape" type="s">
+      <default>'rectangle'</default>
+      <choices>
+        <choice value="rectangle"/>
+        <choice value="loupe"/>
+        <choice value="binoculars"/>
+        <choice value="telescope"/>
+      </choices>
+      <summary>Magnifier appearance</summary>
+    </key>
+    <key name="lens-radius" type="i">
+      <default>300</default>
+      <range min="60" max="2160"/>
+      <summary>Round lens radius in logical pixels</summary>
+    </key>
     <key name="lens-width" type="i">
       <default>1000</default>
       <range min="160" max="7680"/>

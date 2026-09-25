@@ -4,6 +4,30 @@ msgstr "Project-Id-Version: monitor-loupe 0.2.0\nReport-Msgid-Bugs-To: https://g
 msgid "General"
 msgstr "Allgemein"
 
+msgid "Lens appearance"
+msgstr "Lupenansicht"
+
+msgid "Shape"
+msgstr "Form"
+
+msgid "Rectangle"
+msgstr "Rechteck"
+
+msgid "Magnifying glass"
+msgstr "Lupe mit Griff"
+
+msgid "Binoculars"
+msgstr "Feldstecher"
+
+msgid "Telescope"
+msgstr "Fernrohr"
+
+msgid "Radius"
+msgstr "Radius"
+
+msgid "Radius of each lens. The frame and handle are included when fitting to the monitor."
+msgstr "Radius jeder Linse. Rahmen und Griff werden beim Anpassen an den Monitor berücksichtigt."
+
 msgid "Lens size"
 msgstr "Lupenfenster"
 

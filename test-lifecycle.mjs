@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {lensGeometry} from './geometry.js';
+import {lensGeometry, insideLens} from './geometry.js';
 import {nextZoom} from './zoom.js';
 
 // Run the real extension against a small Shell boundary, without a live desktop.
@@ -28,6 +28,7 @@ class Signals {
 class Settings extends Signals {
     constructor(values) { super(); this.values = values; }
     get_int(key) { return this.values[key]; }
+    get_string(key) { return this.values[key]; }
     get_double(key) { return this.values[key]; }
     get_boolean(key) { return this.values[key]; }
     set_boolean(key, value) { this.values[key] = value; }
@@ -47,6 +48,7 @@ const source = readFileSync(new URL('./extension.js', import.meta.url), 'utf8')
     .replace('export default class MonitorLoupe', 'class MonitorLoupe');
 const settings = new Settings({
     'lens-width': 640, 'lens-height': 360, 'zoom-step': 0.25, 'scroll-zoom': true,
+    'lens-shape': 'rectangle', 'lens-radius': 300,
 });
 const a11y = new Settings({'screen-magnifier-enabled': false});
 const magnifierSettings = new Settings({'mag-factor': 2});
@@ -58,7 +60,17 @@ let restoreCount = 0;
 let failROI = false;
 const region = {
     _xMagFactor: 2, _yMagFactor: 2, _lensMode: true, _clampScrollingAtEdges: true,
-    _setViewPort(viewport) { this.viewport = viewport; },
+    _setViewPort(viewport) {
+        this.viewport = viewport;
+        this._viewPortX = viewport.x;
+        this._viewPortY = viewport.y;
+        this._viewPortWidth = viewport.width;
+        this._viewPortHeight = viewport.height;
+        this._updateMagViewGeometry();
+    },
+    _updateMagViewGeometry() {},
+    _destroyActors() { this._magView = null; },
+    _isFullScreen() { return true; },
     _changeROI(params) {
         if (failROI)
             throw new Error('ROI failure');
@@ -86,7 +98,8 @@ const Clutter = {
 };
 const ExtensionClass = vm.runInNewContext(`${source}\nMonitorLoupe;`, {
     Extension: class { getSettings() { return settings; } },
-    InjectionManager, lensGeometry, nextZoom, Main, Clutter,
+    InjectionManager, lensGeometry, insideLens, nextZoom, Main, Clutter,
+    createLensEffect: shape => ({shape}),
     Gio: {Settings: class {
         constructor({schema_id}) {
             return schema_id.endsWith('.applications') ? a11y : magnifierSettings;
@@ -113,6 +126,40 @@ layout.monitors = [{x: 0, y: 0, width: 500, height: 300}];
 layout.emit('monitors-changed');
 assert.equal(region.viewport.width, 500);
 assert.equal(region.viewport.height, 300);
+
+function mockActor() {
+    return {
+        style: 'original', effects: new Set(),
+        get_style() { return this.style; },
+        set_style(style) { this.style = style; },
+        add_effect(effect) { this.effects.add(effect); },
+        remove_effect(effect) { assert(this.effects.delete(effect)); },
+    };
+}
+const actor = mockActor();
+region._magView = actor;
+for (const shape of ['loupe', 'binoculars', 'telescope']) {
+    settings.values['lens-shape'] = shape;
+    settings.emit('changed', 'lens-shape');
+    assert.equal(actor.effects.size, 1, 'Shape changes must replace the effect');
+    assert.equal([...actor.effects][0].shape, shape);
+    assert.equal(region._isFullScreen(), false, 'Desktop must remain visible through the mask');
+    assert.equal(region._isMouseOverRegion(), false, 'Do not hide the system cursor in transparent corners');
+}
+settings.values['lens-radius'] = 60;
+settings.emit('changed', 'lens-radius');
+assert.equal(region.viewport.width, 120, 'Radius must apply immediately');
+region._destroyActors();
+assert.equal(actor.effects.size, 0, 'Release effects before GNOME destroys its actor');
+assert.equal(actor.style, 'original');
+region._magView = mockActor();
+region._updateMagViewGeometry();
+assert.equal(region._magView.effects.size, 1, 'Reactivation must recreate the mask');
+settings.values['lens-shape'] = 'rectangle';
+settings.emit('changed', 'lens-shape');
+assert.equal(region._magView.effects.size, 0);
+assert.equal(region._magView.style, 'original');
+assert.equal(region._isFullScreen(), true);
 
 assert.equal(scroll(0, 0), false);
 assert.equal(a11y.values['screen-magnifier-enabled'], false);
@@ -156,13 +203,18 @@ assert.throws(() => region._changeROI(), /ROI failure/);
 assert.equal(region._lensMode, true);
 assert.equal(region._clampScrollingAtEdges, true);
 failROI = false;
+settings.values['lens-shape'] = 'loupe';
+settings.emit('changed', 'lens-shape');
 extension.disable();
+assert.equal(region._magView.effects.size, 0, 'Disable must remove the mask');
+assert.equal(region._magView.style, 'original');
 assert.equal(Main.wm.handleWorkspaceScroll({}), 'fallback');
 assert.equal(stage.handlers.size, 0);
 assert.equal(layout.handlers.size, 0);
 assert.equal(settings.handlers.size, 0);
 assert.equal(keys.size, 0);
-for (const key of ['_setViewPort', '_changeROI', 'scrollToMousePos'])
+for (const key of ['_setViewPort', '_changeROI', 'scrollToMousePos',
+    '_updateMagViewGeometry', '_destroyActors', '_isFullScreen', '_isMouseOverRegion'])
     assert.equal(region[key], originals[key]);
 assert.equal(restoreCount, 1);
 extension.disable();

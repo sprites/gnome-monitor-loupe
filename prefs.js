@@ -17,12 +17,34 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         window.add(page);
 
         const lens = new Adw.PreferencesGroup({
-            title: _('Lens size'),
+            title: _('Lens appearance'),
             description: _('Logical pixels. The lens is automatically limited to the current monitor.'),
         });
         page.add(lens);
-        this._spin(lens, settings, 'lens-width', _('Width'), 160, 7680, 20, 0);
-        this._spin(lens, settings, 'lens-height', _('Height'), 90, 4320, 10, 0);
+        const shapes = ['rectangle', 'loupe', 'binoculars', 'telescope'];
+        const shape = new Adw.ComboRow({
+            title: _('Shape'),
+            model: Gtk.StringList.new([_('Rectangle'), _('Magnifying glass'), _('Binoculars'), _('Telescope')]),
+        });
+        lens.add(shape);
+        const width = this._spin(lens, settings, 'lens-width', _('Width'), 160, 7680, 20, 0);
+        const height = this._spin(lens, settings, 'lens-height', _('Height'), 90, 4320, 10, 0);
+        const radius = this._spin(lens, settings, 'lens-radius', _('Radius'), 60, 2160, 10, 0);
+        radius.subtitle = _('Radius of each lens. The frame and handle are included when fitting to the monitor.');
+        const updateShape = () => {
+            const selected = shapes.indexOf(settings.get_string('lens-shape'));
+            shape.selected = selected;
+            shape.sensitive = settings.is_writable('lens-shape');
+            width.visible = height.visible = selected === 0;
+            radius.visible = selected !== 0;
+        };
+        updateShape();
+        shape.connect('notify::selected', () => {
+            const value = shapes[shape.selected];
+            if (value && value !== settings.get_string('lens-shape'))
+                settings.set_string('lens-shape', value);
+        });
+        connections.push([settings, settings.connect('changed::lens-shape', updateShape)]);
 
         const zoom = new Adw.PreferencesGroup({title: _('Zoom')});
         page.add(zoom);

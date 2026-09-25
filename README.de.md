@@ -24,7 +24,13 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   Zoomschritt. Zunächst sind keine belegt, um bestehende Kürzel zu erhalten.
   Kürzel anklicken und die neue Kombination drücken. Rücktaste deaktiviert,
   Escape bricht ab. Eine noch freie Kombination wählen.
-- **Breite/Höhe:** standardmäßig 1000 × 650 logische Pixel. Änderungen werden
+- **Form:** Rechteck (Standard), runde Lupe mit Griff, Feldstecher mit zwei
+  überlappenden Linsen oder Fernrohr mit Messingrahmen. Außerhalb der Form
+  bleibt der normale Desktop sichtbar.
+- **Radius:** für die runden Formen von 60 bis 2160 logischen Pixeln wählbar,
+  standardmäßig 300. Beim Feldstecher gilt der Radius für jede Linse. Die gesamte
+  Form wird bei Bedarf proportional verkleinert, damit sie auf den Monitor passt.
+- **Breite/Höhe:** für das Rechteck, standardmäßig 1000 × 650 logische Pixel. Änderungen werden
   sofort übernommen. Die Lupe wird höchstens so groß wie der aktuelle Monitor.
 - **Zurücksetzen:** stellt die Erweiterungswerte wieder her. Das systemweite
   Ein/Aus-Kürzel bleibt erhalten.
