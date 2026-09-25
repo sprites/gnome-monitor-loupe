@@ -17,7 +17,7 @@ den Nachbarmonitor reichen.
 
 *Die Symbole veranschaulichen die vier Formen; sie sind keine Desktop-Screenshots.*
 
-Die **Rahmen- und Symbolfarbe** ist für alle vier Ansichten frei wählbar.
+Die **Rahmen- und Symbolfarbe** sowie die **Rahmendicke** sind für alle vier Ansichten einstellbar.
 Die Lupe passt sich mitsamt Rahmen und Griff an die aktuelle Monitorgrösse an.
 Wähle die Form über eines der **vier Symbolfelder ganz oben in den Einstellungen**.
 Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenregler.
@@ -45,7 +45,7 @@ Aktuelle Aufnahmen des Einstellungsfensters, jeweils mit dem Bereich „Lupenans
 ![Einstellungen der Lupe, Radius und Farbauswahl](docs/preferences-round-de.png)
 
 Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
-du den Rechteckrahmen aus. Änderungen an der Ansicht werden sofort übernommen.
+du den Rahmen aller Formen aus. Änderungen an der Ansicht werden sofort übernommen.
 
 ## Einstellungen
 
@@ -75,7 +75,7 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   standardmäßig 300. Beim Feldstecher gilt der Radius für jede Linse. Die gesamte
   Form wird bei Bedarf proportional verkleinert, damit sie auf den Monitor passt.
 - **Rahmen- und Symbolfarbe:** frei wählbare Farbe für alle Formen und den Lupengriff.
-- **Rahmendicke:** beim Rechteck von 0 bis 20 logischen Pixeln, standardmäßig 2.
+- **Rahmendicke:** bei allen Formen von 0 bis 20 logischen Pixeln, standardmäßig 2.
   Mit 0 wird der Rahmen ausgeblendet. Farbe und Dicke werden sofort übernommen.
 - **Breite/Höhe:** für das Rechteck, standardmäßig 1000 × 650 logische Pixel. Änderungen werden
   sofort übernommen. Die Lupe wird höchstens so gross wie der aktuelle Monitor.

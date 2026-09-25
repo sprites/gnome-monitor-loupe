@@ -7,8 +7,8 @@ msgstr "Allgemein"
 msgid "Frame thickness"
 msgstr "Rahmendicke"
 
-msgid "Logical pixels. Set to 0 to hide the rectangle frame."
-msgstr "Logische Pixel. Mit 0 wird der Rahmen des Rechtecks ausgeblendet."
+msgid "Logical pixels. Applies to every shape; set to 0 to hide the frame."
+msgstr "Logische Pixel. Gilt für alle Formen; mit 0 wird der Rahmen ausgeblendet."
 
 msgid "Frame and symbol color"
 msgstr "Rahmen- und Symbolfarbe"

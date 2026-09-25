@@ -6,10 +6,14 @@ import {frameColor} from './color.js';
 
 // Mask the complete magnifier actor, including GNOME's background and cursor.
 // Transparent pixels reveal the original desktop; a CSS border alone cannot do this.
-export function createLensEffect(shape, color) {
+export function createLensEffect(shape, color, borderWidth = 2, radius = 300) {
     const [width, height] = shapeSize(shape);
     const rgb = frameColor(color).slice(1).match(/../g)
         .map(channel => (parseInt(channel, 16) / 255).toFixed(6));
+    const outerRadius = 0.96;
+    const borderRadius = Math.min(borderWidth, radius) / Math.max(radius, 1);
+    const glassRadius = Math.max(0, outerRadius - borderRadius);
+    const antialias = (0.5 / Math.max(radius, 1)).toFixed(6);
     const effect = new Clutter.ShaderEffect({shader_type: Cogl.ShaderType.FRAGMENT});
     effect.set_shader_source(`
         uniform sampler2D tex;
@@ -18,8 +22,8 @@ export function createLensEffect(shape, color) {
             vec2 p = uv * vec2(${width.toFixed(1)}, ${height.toFixed(1)});
             float d = length(p - vec2(1.0));
             ${shape === 'binoculars' ? 'd = min(d, length(p - vec2(2.4, 1.0)));' : ''}
-            float outer = 1.0 - smoothstep(0.955, 0.965, d);
-            float glass = 1.0 - smoothstep(${shape === 'telescope' ? '0.835, 0.845' : '0.895, 0.905'}, d);
+            float outer = 1.0 - smoothstep(${outerRadius} - ${antialias}, ${outerRadius} + ${antialias}, d);
+            float glass = 1.0 - smoothstep(${glassRadius.toFixed(6)} - ${antialias}, ${glassRadius.toFixed(6)} + ${antialias}, d);
             vec3 rim = vec3(${rgb.join(', ')});
             ${shape === 'loupe' ? `
                 vec2 a = vec2(1.62);

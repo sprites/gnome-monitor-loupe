@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {lensGeometry, insideLens} from './geometry.js';
+import {lensGeometry, insideLens, shapeSize} from './geometry.js';
 import {nextZoom} from './zoom.js';
 import {frameColor} from './color.js';
 
@@ -102,8 +102,8 @@ const Clutter = {
 };
 const ExtensionClass = vm.runInNewContext(`${source}\nMonitorLoupe;`, {
     Extension: class { getSettings() { return settings; } },
-    InjectionManager, lensGeometry, insideLens, nextZoom, Main, Clutter,
-    frameColor, createLensEffect: (shape, color) => ({shape, color}),
+    InjectionManager, lensGeometry, insideLens, shapeSize, nextZoom, Main, Clutter,
+    frameColor, createLensEffect: (shape, color, borderWidth, radius) => ({shape, color, borderWidth, radius}),
     Gio: {Settings: class {
         constructor({schema_id}) {
             return schema_id.endsWith('.applications') ? a11y : magnifierSettings;
@@ -149,6 +149,7 @@ for (const shape of ['loupe', 'binoculars', 'telescope']) {
     settings.emit('changed', 'lens-shape');
     assert.equal(actor.effects.size, 1, 'Shape changes must replace the effect');
     assert.equal([...actor.effects][0].shape, shape);
+    assert.equal([...actor.effects][0].borderWidth, 2, 'Frame thickness must apply to every round shape');
     assert.equal(region._isFullScreen(), false, 'Desktop must remain visible through the mask');
     assert.equal(region._isMouseOverRegion(), true, 'Keep the cursor centered in the lens at desktop edges');
 }
@@ -176,6 +177,7 @@ assert.match(region._magView.style, /border: 0px/);
 settings.values['lens-shape'] = 'loupe';
 settings.emit('changed', 'lens-shape');
 assert.equal([...region._magView.effects][0].color, '#ff8800');
+assert.equal([...region._magView.effects][0].borderWidth, 0, 'Frame thickness 0 must hide round frames');
 settings.values['frame-color'] = '#00AAFF';
 settings.emit('changed', 'frame-color');
 assert.equal(region._magView.effects.size, 1);

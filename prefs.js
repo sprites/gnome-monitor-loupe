@@ -64,32 +64,48 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         const radius = this._spin(lens, settings, 'lens-radius', _('Radius'), 60, 2160, 10, 0);
         radius.subtitle = _('Radius of each lens. The frame and handle are included when fitting to the monitor.');
         const border = this._spin(lens, settings, 'rectangle-border-width', _('Frame thickness'), 0, 20, 1, 0);
-        border.subtitle = _('Logical pixels. Set to 0 to hide the rectangle frame.');
+        border.subtitle = _('Logical pixels. Applies to every shape; set to 0 to hide the frame.');
         const colorRow = new Adw.ActionRow({
             title: _('Frame and symbol color'),
             subtitle: _('Colors all four symbols and the lens frame and handle.'),
         });
-        const colorButton = new Gtk.ColorDialogButton({
-            dialog: new Gtk.ColorDialog({title: _('Frame and symbol color'), with_alpha: false}),
+        const colorButton = new Gtk.MenuButton({
             valign: Gtk.Align.CENTER,
             tooltip_text: _('Frame and symbol color'),
+            has_frame: false,
         });
+        const colorSwatch = new Gtk.DrawingArea({content_width: 32, content_height: 32});
+        colorSwatch.set_draw_func((_area, cr, width, height) => {
+            const rgba = new Gdk.RGBA();
+            rgba.parse(frameColor(settings.get_string('frame-color')));
+            const size = Math.min(width, height);
+            cr.arc(width / 2, height / 2, size * 0.32, 0, Math.PI * 2);
+            cr.setSourceRGBA(rgba.red, rgba.green, rgba.blue, 1);
+            cr.fillPreserve();
+            cr.setSourceRGBA(0.45, 0.48, 0.52, 1);
+            cr.setLineWidth(1.5);
+            cr.stroke();
+        });
+        colorButton.child = colorSwatch;
+        const colorChooser = new Gtk.ColorChooserWidget({use_alpha: false, show_editor: false});
+        colorButton.set_popover(new Gtk.Popover({child: colorChooser}));
         let updatingColor = false;
         const updateColor = () => {
             const rgba = new Gdk.RGBA();
             rgba.parse(frameColor(settings.get_string('frame-color')));
             updatingColor = true;
-            colorButton.rgba = rgba;
+            colorChooser.rgba = rgba;
             updatingColor = false;
             colorButton.sensitive = settings.is_writable('frame-color');
+            colorSwatch.queue_draw();
             for (const area of shapeAreas)
                 area.queue_draw();
         };
         updateColor();
-        colorButton.connect('notify::rgba', () => {
+        colorChooser.connect('notify::rgba', () => {
             if (updatingColor)
                 return;
-            const rgba = colorButton.rgba;
+            const rgba = colorChooser.rgba;
             const hex = '#' + [rgba.red, rgba.green, rgba.blue]
                 .map(channel => Math.round(channel * 255).toString(16).padStart(2, '0')).join('');
             if (hex !== settings.get_string('frame-color'))
@@ -112,7 +128,7 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
             });
             updatingShape = false;
             width.visible = height.visible = selected === 0;
-            border.visible = selected === 0;
+            border.visible = true;
             radius.visible = selected !== 0;
         };
         updateShape();

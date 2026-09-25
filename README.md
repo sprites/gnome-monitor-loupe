@@ -36,7 +36,7 @@ through all four available shapes.
 Monitor Loupe is designed for people who work with large or multiple displays:
 
 - **Four adjustable shapes:** set width and height for the rectangle or the
-  radius for round lenses. Choose the frame color and rectangle frame thickness.
+  radius for round lenses. Choose the frame color and thickness for every shape.
 - **True multi-monitor behavior:** the lens follows the pointer to the monitor
   it is currently on, including mixed layouts and different display sizes.
 - **Pointer-centered at screen edges:** the lens stays centered on the pointer;
@@ -55,8 +55,8 @@ Actual captures of the current preferences window (appearance section).
 
 ![Magnifier preferences with radius and color](docs/preferences-round-en.png)
 
-Click the color swatch to choose a color. Set rectangle frame thickness to **0**
-to hide its border. Appearance changes apply immediately.
+Click the color swatch to choose a color. Set frame thickness to **0**
+to hide the border on every shape. Appearance changes apply immediately.
 
 ## Controls and preferences
 
@@ -85,7 +85,7 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   binoculars this applies to each lens. The whole shape scales down proportionally
   when needed to fit the current monitor, including its frame and handle.
 - **Frame and symbol color:** choose a color for all shapes and the magnifying glass handle.
-- **Frame thickness:** 0–20 logical pixels for the rectangle, initially 2.
+- **Frame thickness:** 0–20 logical pixels for every shape, initially 2.
   Set to 0 to hide the frame. Color and thickness changes apply immediately.
 - **Lens width and height** apply to the rectangle and are adjustable in logical pixels, initially
   1000 × 650. Changes apply immediately. Oversized dimensions are limited to the

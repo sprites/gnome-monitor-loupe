@@ -5,7 +5,7 @@ import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import {lensGeometry, insideLens} from './geometry.js';
+import {lensGeometry, insideLens, shapeSize} from './geometry.js';
 import {createLensEffect} from './appearance.js';
 import {frameColor} from './color.js';
 import {nextZoom} from './zoom.js';
@@ -174,7 +174,11 @@ export default class MonitorLoupe extends Extension {
         const shape = this._settings.get_string('lens-shape');
         const color = frameColor(this._settings.get_string('frame-color'));
         const borderWidth = this._settings.get_int('rectangle-border-width');
-        const appearance = `${shape}:${color}:${borderWidth}`;
+        const [shapeWidth, shapeHeight] = shape === 'rectangle' ? [1, 1] : shapeSize(shape);
+        const radius = Math.max(1, Math.min(
+            this._region._viewPortWidth / shapeWidth,
+            this._region._viewPortHeight / shapeHeight));
+        const appearance = `${shape}:${color}:${borderWidth}:${radius}`;
         if (actor === this._appearanceActor && appearance === this._appearanceShape)
             return;
         this._clearAppearance();
@@ -187,7 +191,7 @@ export default class MonitorLoupe extends Extension {
             actor.set_style(`border: ${borderWidth}px solid ${color}; border-radius: 0; padding: 0;`);
             return;
         }
-        this._shapeEffect = createLensEffect(shape, color);
+        this._shapeEffect = createLensEffect(shape, color, borderWidth, radius);
         actor.set_style('border: 0; padding: 0; background-color: transparent; box-shadow: none;');
         actor.add_effect(this._shapeEffect);
     }
