@@ -3,8 +3,11 @@ import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
+import St from 'gi://St';
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import {lensGeometry, insideLens, shapeSize} from './geometry.js';
 import {createLensEffect} from './appearance.js';
 import {frameColor} from './color.js';
@@ -29,6 +32,7 @@ export default class MonitorLoupe extends Extension {
         this._boundShortcuts = [];
         this._scrollRemainder = 0;
         this._lastScrollTime = 0;
+        this._addIndicator();
         this._region = Main.magnifier.getZoomRegions()[0];
         const region = this._region;
         if (!region || typeof region._changeROI !== 'function' ||
@@ -158,6 +162,20 @@ export default class MonitorLoupe extends Extension {
         Main.wm.handleWorkspaceScroll = this._workspaceScrollHandler;
     }
 
+    _addIndicator() {
+        if (!Main.panel || typeof PanelMenu === 'undefined')
+            return;
+        this._indicator = new PanelMenu.Button(0.0, 'Monitor Loupe');
+        this._indicator.add_child(new St.Icon({
+            icon_name: 'zoom-in-symbolic',
+            style_class: 'system-status-icon',
+        }));
+        const preferences = new PopupMenu.PopupMenuItem('Monitor Loupe Einstellungen');
+        preferences.connect('activate', () => this.openPreferences());
+        this._indicator.menu.addMenuItem(preferences);
+        Main.panel.addToStatusArea(this.uuid, this._indicator);
+    }
+
     _clearAppearance() {
         if (this._appearanceActor) {
             if (this._shapeEffect)
@@ -258,6 +276,8 @@ export default class MonitorLoupe extends Extension {
     }
 
     disable() {
+        this._indicator?.destroy();
+        this._indicator = null;
         if (Main.wm.handleWorkspaceScroll === this._workspaceScrollHandler)
             Main.wm.handleWorkspaceScroll = this._originalWorkspaceScroll;
         this._workspaceScrollHandler = null;
