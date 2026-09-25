@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema id="org.gnome.shell.extensions.monitor-loupe" path="/org/gnome/shell/extensions/monitor-loupe/">
+    <key name="frame-color" type="s">
+      <default>'#242b33'</default>
+      <summary>Frame and handle color in #rrggbb format</summary>
+    </key>
+    <key name="rectangle-border-width" type="i">
+      <default>2</default>
+      <range min="0" max="20"/>
+      <summary>Rectangle border width in logical pixels</summary>
+    </key>
     <key name="lens-shape" type="s">
       <default>'rectangle'</default>
       <choices>

@@ -25,11 +25,14 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   Kürzel anklicken und die neue Kombination drücken. Rücktaste deaktiviert,
   Escape bricht ab. Eine noch freie Kombination wählen.
 - **Form:** Rechteck (Standard), runde Lupe mit Griff, Feldstecher mit zwei
-  überlappenden Linsen oder Fernrohr mit Messingrahmen. Außerhalb der Form
+  überlappenden Linsen oder Fernrohr. Außerhalb der Form
   bleibt der normale Desktop sichtbar.
 - **Radius:** für die runden Formen von 60 bis 2160 logischen Pixeln wählbar,
   standardmäßig 300. Beim Feldstecher gilt der Radius für jede Linse. Die gesamte
   Form wird bei Bedarf proportional verkleinert, damit sie auf den Monitor passt.
+- **Rahmen- und Symbolfarbe:** frei wählbare Farbe für alle Formen und den Lupengriff.
+- **Rahmendicke:** beim Rechteck von 0 bis 20 logischen Pixeln, standardmäßig 2.
+  Mit 0 wird der Rahmen ausgeblendet. Farbe und Dicke werden sofort übernommen.
 - **Breite/Höhe:** für das Rechteck, standardmäßig 1000 × 650 logische Pixel. Änderungen werden
   sofort übernommen. Die Lupe wird höchstens so groß wie der aktuelle Monitor.
 - **Zurücksetzen:** stellt die Erweiterungswerte wieder her. Das systemweite

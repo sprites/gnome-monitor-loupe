@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {lensGeometry, insideLens} from './geometry.js';
 import {nextZoom} from './zoom.js';
+import {frameColor} from './color.js';
 
 // Run the real extension against a small Shell boundary, without a live desktop.
 class Signals {
@@ -49,6 +50,7 @@ const source = readFileSync(new URL('./extension.js', import.meta.url), 'utf8')
 const settings = new Settings({
     'lens-width': 640, 'lens-height': 360, 'zoom-step': 0.25, 'scroll-zoom': true,
     'lens-shape': 'rectangle', 'lens-radius': 300,
+    'frame-color': '#242b33', 'rectangle-border-width': 2,
 });
 const a11y = new Settings({'screen-magnifier-enabled': false});
 const magnifierSettings = new Settings({'mag-factor': 2});
@@ -99,7 +101,7 @@ const Clutter = {
 const ExtensionClass = vm.runInNewContext(`${source}\nMonitorLoupe;`, {
     Extension: class { getSettings() { return settings; } },
     InjectionManager, lensGeometry, insideLens, nextZoom, Main, Clutter,
-    createLensEffect: shape => ({shape}),
+    frameColor, createLensEffect: (shape, color) => ({shape, color}),
     Gio: {Settings: class {
         constructor({schema_id}) {
             return schema_id.endsWith('.applications') ? a11y : magnifierSettings;
@@ -158,7 +160,27 @@ assert.equal(region._magView.effects.size, 1, 'Reactivation must recreate the ma
 settings.values['lens-shape'] = 'rectangle';
 settings.emit('changed', 'lens-shape');
 assert.equal(region._magView.effects.size, 0);
-assert.equal(region._magView.style, 'original');
+assert.match(region._magView.style, /border: 2px solid #242b33/);
+settings.values['frame-color'] = '#ff8800';
+settings.emit('changed', 'frame-color');
+settings.values['rectangle-border-width'] = 12;
+settings.emit('changed', 'rectangle-border-width');
+assert.match(region._magView.style, /border: 12px solid #ff8800/);
+settings.values['rectangle-border-width'] = 0;
+settings.emit('changed', 'rectangle-border-width');
+assert.match(region._magView.style, /border: 0px/);
+settings.values['lens-shape'] = 'loupe';
+settings.emit('changed', 'lens-shape');
+assert.equal([...region._magView.effects][0].color, '#ff8800');
+settings.values['frame-color'] = '#00AAFF';
+settings.emit('changed', 'frame-color');
+assert.equal(region._magView.effects.size, 1);
+assert.equal([...region._magView.effects][0].color, '#00aaff');
+settings.values['frame-color'] = 'invalid; color: red';
+settings.emit('changed', 'frame-color');
+assert.equal([...region._magView.effects][0].color, '#242b33');
+settings.values['lens-shape'] = 'rectangle';
+settings.emit('changed', 'lens-shape');
 assert.equal(region._isFullScreen(), true);
 
 assert.equal(scroll(0, 0), false);

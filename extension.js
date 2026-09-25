@@ -7,6 +7,7 @@ import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extension
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import {lensGeometry, insideLens} from './geometry.js';
 import {createLensEffect} from './appearance.js';
+import {frameColor} from './color.js';
 import {nextZoom} from './zoom.js';
 
 const SHORTCUTS = ['loupe-zoom-in', 'loupe-zoom-out'];
@@ -116,7 +117,8 @@ export default class MonitorLoupe extends Extension {
             });
         region._changeROI();
         this._settingsChangedId = this._settings.connect('changed', (_settings, key) => {
-            if (['lens-width', 'lens-height', 'lens-shape', 'lens-radius'].includes(key))
+            if (['lens-width', 'lens-height', 'lens-shape', 'lens-radius',
+                'frame-color', 'rectangle-border-width'].includes(key))
                 region._changeROI();
             this._scrollRemainder = 0;
         });
@@ -147,7 +149,8 @@ export default class MonitorLoupe extends Extension {
 
     _clearAppearance() {
         if (this._appearanceActor) {
-            this._appearanceActor.remove_effect(this._shapeEffect);
+            if (this._shapeEffect)
+                this._appearanceActor.remove_effect(this._shapeEffect);
             this._appearanceActor.set_style(this._originalLensStyle);
         }
         this._appearanceActor = null;
@@ -158,15 +161,22 @@ export default class MonitorLoupe extends Extension {
     _syncAppearance() {
         const actor = this._region._magView;
         const shape = this._settings.get_string('lens-shape');
-        if (actor === this._appearanceActor && shape === this._appearanceShape)
+        const color = frameColor(this._settings.get_string('frame-color'));
+        const borderWidth = this._settings.get_int('rectangle-border-width');
+        const appearance = `${shape}:${color}:${borderWidth}`;
+        if (actor === this._appearanceActor && appearance === this._appearanceShape)
             return;
         this._clearAppearance();
-        if (!actor || shape === 'rectangle')
+        if (!actor)
             return;
-        this._shapeEffect = createLensEffect(shape);
         this._originalLensStyle = actor.get_style();
         this._appearanceActor = actor;
-        this._appearanceShape = shape;
+        this._appearanceShape = appearance;
+        if (shape === 'rectangle') {
+            actor.set_style(`border: ${borderWidth}px solid ${color}; border-radius: 0; padding: 0;`);
+            return;
+        }
+        this._shapeEffect = createLensEffect(shape, color);
         actor.set_style('border: 0; padding: 0; background-color: transparent; box-shadow: none;');
         actor.add_effect(this._shapeEffect);
     }
