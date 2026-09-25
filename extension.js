@@ -170,7 +170,8 @@ export default class MonitorLoupe extends Extension {
             return;
         this._indicator = new PanelMenu.Button(0.0, 'Monitor Loupe');
         this._indicator.add_child(new St.Icon({
-            icon_name: 'zoom-in-symbolic',
+            icon_name: 'system-search-symbolic',
+            icon_size: 24,
             style_class: 'system-status-icon',
         }));
         const preferences = new PopupMenu.PopupMenuItem('Monitor Loupe Einstellungen');
