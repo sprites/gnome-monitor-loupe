@@ -43,7 +43,13 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
 - **Zoom in / out shortcuts** use the configured step. They are initially unset
   to avoid conflicts with existing desktop shortcuts. Backspace clears a shortcut;
   Escape cancels editing. Choose combinations not already used by another app.
-- **Lens width and height** are adjustable in logical pixels, initially
+- **Shape:** rectangle (default), a round magnifying glass with a handle,
+  binoculars with overlapping lenses, or a telescope with a brass rim.
+  The normal desktop remains visible outside the shape. Changes apply immediately.
+- **Radius:** 60–2160 logical pixels for round shapes, initially 300. For
+  binoculars this applies to each lens. The whole shape scales down proportionally
+  when needed to fit the current monitor, including its frame and handle.
+- **Lens width and height** apply to the rectangle and are adjustable in logical pixels, initially
   1000 × 650. Changes apply immediately. Oversized dimensions are limited to the
   current monitor; physical pixel size follows the display scaling.
 - **Reset extension settings** restores these defaults, without changing the

@@ -5,7 +5,8 @@ import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import {lensGeometry} from './geometry.js';
+import {lensGeometry, insideLens} from './geometry.js';
+import {createLensEffect} from './appearance.js';
 import {nextZoom} from './zoom.js';
 
 const SHORTCUTS = ['loupe-zoom-in', 'loupe-zoom-out'];
@@ -33,7 +34,10 @@ export default class MonitorLoupe extends Extension {
             typeof region._setViewPort !== 'function' ||
             typeof region._updateScreenPosition !== 'function' ||
             typeof region.scrollToMousePos !== 'function' ||
-            typeof region._isMouseOverRegion !== 'function')
+            typeof region._isMouseOverRegion !== 'function' ||
+            typeof region._updateMagViewGeometry !== 'function' ||
+            typeof region._destroyActors !== 'function' ||
+            typeof region._isFullScreen !== 'function')
             throw new Error('Unsupported GNOME magnifier API');
         this._injections = new InjectionManager();
         const originalSetViewPort = region._setViewPort;
@@ -43,8 +47,36 @@ export default class MonitorLoupe extends Extension {
                 params.xMagFactor ?? region._xMagFactor,
                 params.yMagFactor ?? region._yMagFactor,
                 this._settings.get_int('lens-width'),
-                this._settings.get_int('lens-height'));
+                this._settings.get_int('lens-height'),
+                this._settings.get_string('lens-shape'),
+                this._settings.get_int('lens-radius'));
         };
+        const extension = this;
+        this._injections.overrideMethod(region, '_updateMagViewGeometry', original =>
+            function (...args) {
+                const result = original.apply(this, args);
+                extension._syncAppearance();
+                return result;
+            });
+        this._injections.overrideMethod(region, '_destroyActors', original =>
+            function (...args) {
+                extension._clearAppearance();
+                return original.apply(this, args);
+            });
+        this._injections.overrideMethod(region, '_isFullScreen', original =>
+            function () {
+                return extension._settings.get_string('lens-shape') === 'rectangle' &&
+                    original.call(this);
+            });
+        this._injections.overrideMethod(region, '_isMouseOverRegion', original =>
+            function () {
+                if (!original.call(this))
+                    return false;
+                const [x, y] = global.get_pointer();
+                return insideLens(extension._settings.get_string('lens-shape'),
+                    x - this._viewPortX, y - this._viewPortY,
+                    this._viewPortWidth, this._viewPortHeight);
+            });
         this._injections.overrideMethod(region, '_setViewPort', original =>
             function (viewport, fromROIUpdate) {
                 const lens = geometry();
@@ -84,7 +116,7 @@ export default class MonitorLoupe extends Extension {
             });
         region._changeROI();
         this._settingsChangedId = this._settings.connect('changed', (_settings, key) => {
-            if (key === 'lens-width' || key === 'lens-height')
+            if (['lens-width', 'lens-height', 'lens-shape', 'lens-radius'].includes(key))
                 region._changeROI();
             this._scrollRemainder = 0;
         });
@@ -111,6 +143,32 @@ export default class MonitorLoupe extends Extension {
             return this._originalWorkspaceScroll?.call(Main.wm, event) ?? result;
         };
         Main.wm.handleWorkspaceScroll = this._workspaceScrollHandler;
+    }
+
+    _clearAppearance() {
+        if (this._appearanceActor) {
+            this._appearanceActor.remove_effect(this._shapeEffect);
+            this._appearanceActor.set_style(this._originalLensStyle);
+        }
+        this._appearanceActor = null;
+        this._shapeEffect = null;
+        this._appearanceShape = null;
+    }
+
+    _syncAppearance() {
+        const actor = this._region._magView;
+        const shape = this._settings.get_string('lens-shape');
+        if (actor === this._appearanceActor && shape === this._appearanceShape)
+            return;
+        this._clearAppearance();
+        if (!actor || shape === 'rectangle')
+            return;
+        this._shapeEffect = createLensEffect(shape);
+        this._originalLensStyle = actor.get_style();
+        this._appearanceActor = actor;
+        this._appearanceShape = shape;
+        actor.set_style('border: 0; padding: 0; background-color: transparent; box-shadow: none;');
+        actor.add_effect(this._shapeEffect);
     }
 
     _onEvent(event) {
@@ -191,6 +249,7 @@ export default class MonitorLoupe extends Extension {
         for (const key of this._boundShortcuts ?? [])
             Main.wm.removeKeybinding(key);
         this._boundShortcuts = null;
+        this._clearAppearance();
         const restoreRegion = this._injections !== undefined && this._injections !== null;
         this._injections?.clear();
         this._injections = null;
