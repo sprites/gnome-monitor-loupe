@@ -8,7 +8,7 @@
     <key name="rectangle-border-width" type="i">
       <default>2</default>
       <range min="0" max="20"/>
-      <summary>Rectangle border width in logical pixels</summary>
+      <summary>Lens frame thickness in logical pixels</summary>
     </key>
     <key name="lens-shape" type="s">
       <default>'rectangle'</default>
