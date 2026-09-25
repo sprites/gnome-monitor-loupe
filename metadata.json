@@ -6,5 +6,5 @@
   "settings-schema": "org.gnome.shell.extensions.monitor-loupe",
   "gettext-domain": "monitor-loupe",
   "url": "https://github.com/sprites/gnome-monitor-loupe",
-  "version": 2
+  "version": 5
 }
