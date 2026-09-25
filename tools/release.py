@@ -29,7 +29,13 @@ def clean_checkout():
 
 def archive_files(path):
     with zipfile.ZipFile(path) as archive:
-        return {name: archive.read(name) for name in archive.namelist() if not name.endswith('/')}
+        files = {name: archive.read(name) for name in archive.namelist() if not name.endswith('/')}
+    # gnome-extensions pack normalizes metadata.json formatting. Compare its
+    # parsed data so irrelevant whitespace does not invalidate the candidate.
+    if 'metadata.json' in files:
+        files['metadata.json'] = json.dumps(
+            json.loads(files['metadata.json']), sort_keys=True, separators=(',', ':')).encode()
+    return files
 
 
 def candidate():
