@@ -22,6 +22,16 @@ Die Lupe passt sich mitsamt Rahmen und Griff an die aktuelle Monitorgrösse an.
 Wähle die Form über eines der **vier Symbolfelder ganz oben in den Einstellungen**.
 Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenregler.
 
+## Die Lupenansichten in Bewegung
+
+Die Animation zeigt, wie der vergrösserte Ausschnitt über einen Desktop wandert
+und dabei alle vier verfügbaren Formen durchläuft.
+
+![Animation mit Rechteck, Lupe, Feldstecher und Fernrohr](docs/monitor-loupe-demo.gif)
+
+*Die Desktop-Szene ist eine Illustration und keine Live-Aufnahme von GNOME.*
+[Statisches PNG-Vorschaubild](docs/monitor-loupe-demo.png)
+
 ## Neue Einstellungen im Bild
 
 Aktuelle Aufnahmen des Einstellungsfensters, jeweils mit dem Bereich „Lupenansicht“.
