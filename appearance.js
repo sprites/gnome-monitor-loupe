@@ -2,11 +2,14 @@
 import Clutter from 'gi://Clutter';
 import Cogl from 'gi://Cogl';
 import {shapeSize} from './geometry.js';
+import {frameColor} from './color.js';
 
 // Mask the complete magnifier actor, including GNOME's background and cursor.
 // Transparent pixels reveal the original desktop; a CSS border alone cannot do this.
-export function createLensEffect(shape) {
+export function createLensEffect(shape, color) {
     const [width, height] = shapeSize(shape);
+    const rgb = frameColor(color).slice(1).match(/../g)
+        .map(channel => (parseInt(channel, 16) / 255).toFixed(6));
     const effect = new Clutter.ShaderEffect({shader_type: Cogl.ShaderType.FRAGMENT});
     effect.set_shader_source(`
         uniform sampler2D tex;
@@ -17,7 +20,7 @@ export function createLensEffect(shape) {
             ${shape === 'binoculars' ? 'd = min(d, length(p - vec2(2.4, 1.0)));' : ''}
             float outer = 1.0 - smoothstep(0.955, 0.965, d);
             float glass = 1.0 - smoothstep(${shape === 'telescope' ? '0.835, 0.845' : '0.895, 0.905'}, d);
-            vec3 rim = ${shape === 'telescope' ? 'vec3(0.64, 0.43, 0.16)' : 'vec3(0.14, 0.17, 0.20)'};
+            vec3 rim = vec3(${rgb.join(', ')});
             ${shape === 'loupe' ? `
                 vec2 a = vec2(1.62);
                 vec2 b = vec2(2.40);

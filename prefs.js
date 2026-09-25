@@ -4,6 +4,7 @@ import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
 import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {frameColor} from './color.js';
 
 export default class MonitorLoupePreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
@@ -31,11 +32,46 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         const height = this._spin(lens, settings, 'lens-height', _('Height'), 90, 4320, 10, 0);
         const radius = this._spin(lens, settings, 'lens-radius', _('Radius'), 60, 2160, 10, 0);
         radius.subtitle = _('Radius of each lens. The frame and handle are included when fitting to the monitor.');
+        const border = this._spin(lens, settings, 'rectangle-border-width', _('Frame thickness'), 0, 20, 1, 0);
+        border.subtitle = _('Logical pixels. Set to 0 to hide the rectangle frame.');
+        const colorRow = new Adw.ActionRow({
+            title: _('Frame and symbol color'),
+            subtitle: _('Applies to all shapes, including the magnifying glass handle.'),
+        });
+        const colorButton = new Gtk.ColorDialogButton({
+            dialog: new Gtk.ColorDialog({title: _('Frame and symbol color'), with_alpha: false}),
+            valign: Gtk.Align.CENTER,
+            tooltip_text: _('Frame and symbol color'),
+        });
+        let updatingColor = false;
+        const updateColor = () => {
+            const rgba = new Gdk.RGBA();
+            rgba.parse(frameColor(settings.get_string('frame-color')));
+            updatingColor = true;
+            colorButton.rgba = rgba;
+            updatingColor = false;
+            colorButton.sensitive = settings.is_writable('frame-color');
+        };
+        updateColor();
+        colorButton.connect('notify::rgba', () => {
+            if (updatingColor)
+                return;
+            const rgba = colorButton.rgba;
+            const hex = '#' + [rgba.red, rgba.green, rgba.blue]
+                .map(channel => Math.round(channel * 255).toString(16).padStart(2, '0')).join('');
+            if (hex !== settings.get_string('frame-color'))
+                settings.set_string('frame-color', hex);
+        });
+        connections.push([settings, settings.connect('changed::frame-color', updateColor)]);
+        colorRow.add_suffix(colorButton);
+        colorRow.activatable_widget = colorButton;
+        lens.add(colorRow);
         const updateShape = () => {
             const selected = shapes.indexOf(settings.get_string('lens-shape'));
             shape.selected = selected;
             shape.sensitive = settings.is_writable('lens-shape');
             width.visible = height.visible = selected === 0;
+            border.visible = selected === 0;
             radius.visible = selected !== 0;
         };
         updateShape();

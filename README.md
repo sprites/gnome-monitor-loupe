@@ -44,11 +44,14 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   to avoid conflicts with existing desktop shortcuts. Backspace clears a shortcut;
   Escape cancels editing. Choose combinations not already used by another app.
 - **Shape:** rectangle (default), a round magnifying glass with a handle,
-  binoculars with overlapping lenses, or a telescope with a brass rim.
+  binoculars with overlapping lenses, or a telescope.
   The normal desktop remains visible outside the shape. Changes apply immediately.
 - **Radius:** 60–2160 logical pixels for round shapes, initially 300. For
   binoculars this applies to each lens. The whole shape scales down proportionally
   when needed to fit the current monitor, including its frame and handle.
+- **Frame and symbol color:** choose a color for all shapes and the magnifying glass handle.
+- **Frame thickness:** 0–20 logical pixels for the rectangle, initially 2.
+  Set to 0 to hide the frame. Color and thickness changes apply immediately.
 - **Lens width and height** apply to the rectangle and are adjustable in logical pixels, initially
   1000 × 650. Changes apply immediately. Oversized dimensions are limited to the
   current monitor; physical pixel size follows the display scaling.
