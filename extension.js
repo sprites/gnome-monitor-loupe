@@ -41,7 +41,6 @@ export default class MonitorLoupe extends Extension {
             typeof region._isFullScreen !== 'function')
             throw new Error('Unsupported GNOME magnifier API');
         this._injections = new InjectionManager();
-        const originalSetViewPort = region._setViewPort;
         const geometry = (params = {}) => {
             const [x, y] = global.get_pointer();
             return lensGeometry(Main.layoutManager.monitors, x, y,
@@ -81,17 +80,29 @@ export default class MonitorLoupe extends Extension {
         this._injections.overrideMethod(region, '_setViewPort', original =>
             function (viewport, fromROIUpdate) {
                 const lens = geometry();
-                return original.call(this, lens?.viewport ?? viewport, fromROIUpdate);
+                const result = original.call(this, lens?.viewport ?? viewport, fromROIUpdate);
+                if (lens) {
+                    // GNOME clamps the magnifier window to the desktop rectangle.
+                    // Restore its pointer-centered position; the stage clips the
+                    // part that cannot be displayed beyond a physical edge.
+                    this._viewPortX = lens.viewport.x;
+                    this._viewPortY = lens.viewport.y;
+                    this._updateMagViewGeometry();
+                    if (this.isActive() && this._isMouseOverRegion())
+                        this._magnifier.hideSystemCursor();
+                    Main.uiGroup.set_opacity(this.isActive() && this._isFullScreen() ? 0 : 255);
+                }
+                return result;
             });
         this._injections.overrideMethod(region, '_changeROI', original =>
             function (params = {}) {
                 const lens = geometry(params);
                 if (!lens)
                     return original.call(this, params);
-                originalSetViewPort.call(this, lens.viewport, true);
+                this._setViewPort(lens.viewport, true);
                 const lensMode = this._lensMode;
                 const clampEdges = this._clampScrollingAtEdges;
-                // Geometry above handles both viewport and source bounds per monitor.
+                // The viewport stays pointer-centered; the Shell clips it at desktop edges.
                 this._lensMode = false;
                 this._clampScrollingAtEdges = false;
                 try {

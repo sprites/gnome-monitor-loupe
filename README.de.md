@@ -1,7 +1,9 @@
 # GNOME Monitor Loupe
 
-Eine Lupe für **GNOME Shell 50**, die dem Mauszeiger folgt und auf dessen Monitor
-bleibt. Auch der vergrößerte Quellbereich bleibt innerhalb dieses Monitors.
+Eine Lupe für **GNOME Shell 50**, die dem Mauszeiger folgt. An Bildschirmrändern
+bleibt sie auf dem Mauszeiger zentriert; GNOME schneidet nur den Teil ab, der
+ausserhalb des sichtbaren Desktops liegt. An Monitorübergängen kann die Lupe auf
+den Nachbarmonitor reichen.
 
 [English documentation](README.md)
 
@@ -15,8 +17,8 @@ bleibt. Auch der vergrößerte Quellbereich bleibt innerhalb dieses Monitors.
 
 *Die Symbole veranschaulichen die vier Formen; sie sind keine Desktop-Screenshots.*
 
-Die **Rahmen- und Symbolfarbe** ist für alle vier Ansichten frei wählbar. Die Lupe
-folgt dem Mauszeiger und passt sich mitsamt Rahmen und Griff an den aktuellen Monitor an.
+Die **Rahmen- und Symbolfarbe** ist für alle vier Ansichten frei wählbar.
+Die Lupe passt sich mitsamt Rahmen und Griff an die aktuelle Monitorgrösse an.
 Wähle die Form über eines der **vier Symbolfelder ganz oben in den Einstellungen**.
 Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenregler.
 
@@ -66,7 +68,7 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
 - **Rahmendicke:** beim Rechteck von 0 bis 20 logischen Pixeln, standardmäßig 2.
   Mit 0 wird der Rahmen ausgeblendet. Farbe und Dicke werden sofort übernommen.
 - **Breite/Höhe:** für das Rechteck, standardmäßig 1000 × 650 logische Pixel. Änderungen werden
-  sofort übernommen. Die Lupe wird höchstens so groß wie der aktuelle Monitor.
+  sofort übernommen. Die Lupe wird höchstens so gross wie der aktuelle Monitor.
 - **Zurücksetzen:** stellt die Erweiterungswerte wieder her. Das systemweite
   Ein/Aus-Kürzel bleibt erhalten.
 
