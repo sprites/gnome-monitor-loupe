@@ -11,7 +11,7 @@ test:
 
 pack: test
 	mkdir -p dist
-	gnome-extensions pack --force --extra-source=geometry.js --extra-source=zoom.js --extra-source=appearance.js --extra-source=color.js --extra-source=LICENSE --podir=po --out-dir=dist .
+	gnome-extensions pack --force --extra-source=geometry.js --extra-source=zoom.js --extra-source=appearance.js --extra-source=color.js --extra-source=icons --extra-source=LICENSE --podir=po --out-dir=dist .
 
 clean:
 	rm -f dist/$(UUID).shell-extension.zip

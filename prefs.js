@@ -23,11 +23,39 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         });
         page.add(lens);
         const shapes = ['rectangle', 'loupe', 'binoculars', 'telescope'];
-        const shape = new Adw.ComboRow({
-            title: _('Shape'),
-            model: Gtk.StringList.new([_('Rectangle'), _('Magnifying glass'), _('Binoculars'), _('Telescope')]),
+        const titles = [_('Rectangle'), _('Magnifying glass'), _('Binoculars'), _('Telescope')];
+        const shapeGrid = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL, homogeneous: true,
+            spacing: 8, margin_top: 8, margin_bottom: 8,
+            margin_start: 8, margin_end: 8,
         });
-        lens.add(shape);
+        let updatingShape = false;
+        const shapeButtons = shapes.map((value, index) => {
+            const button = new Gtk.ToggleButton({hexpand: true, tooltip_text: titles[index]});
+            button.update_property([Gtk.AccessibleProperty.LABEL], [titles[index]]);
+            const content = new Gtk.Box({
+                orientation: Gtk.Orientation.VERTICAL, spacing: 8,
+                margin_top: 12, margin_bottom: 12,
+            });
+            content.append(new Gtk.Image({
+                gicon: new Gio.FileIcon({file: this.dir.get_child('icons').get_child(`${value}.svg`)}),
+                pixel_size: 64,
+            }));
+            content.append(new Gtk.Label({
+                label: titles[index], wrap: true, justify: Gtk.Justification.CENTER,
+                height_request: 36,
+            }));
+            button.child = content;
+            button.connect('toggled', () => {
+                if (!updatingShape && button.active && value !== settings.get_string('lens-shape'))
+                    settings.set_string('lens-shape', value);
+            });
+            shapeGrid.append(button);
+            return button;
+        });
+        for (const button of shapeButtons.slice(1))
+            button.set_group(shapeButtons[0]);
+        lens.add(new Adw.PreferencesRow({child: shapeGrid, activatable: false, selectable: false}));
         const width = this._spin(lens, settings, 'lens-width', _('Width'), 160, 7680, 20, 0);
         const height = this._spin(lens, settings, 'lens-height', _('Height'), 90, 4320, 10, 0);
         const radius = this._spin(lens, settings, 'lens-radius', _('Radius'), 60, 2160, 10, 0);
@@ -68,18 +96,21 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         lens.add(colorRow);
         const updateShape = () => {
             const selected = shapes.indexOf(settings.get_string('lens-shape'));
-            shape.selected = selected;
-            shape.sensitive = settings.is_writable('lens-shape');
+            updatingShape = true;
+            shapeButtons.forEach((button, index) => {
+                button.active = index === selected;
+                button.sensitive = settings.is_writable('lens-shape');
+                if (button.active)
+                    button.add_css_class('suggested-action');
+                else
+                    button.remove_css_class('suggested-action');
+            });
+            updatingShape = false;
             width.visible = height.visible = selected === 0;
             border.visible = selected === 0;
             radius.visible = selected !== 0;
         };
         updateShape();
-        shape.connect('notify::selected', () => {
-            const value = shapes[shape.selected];
-            if (value && value !== settings.get_string('lens-shape'))
-                settings.set_string('lens-shape', value);
-        });
         connections.push([settings, settings.connect('changed::lens-shape', updateShape)]);
 
         const zoom = new Adw.PreferencesGroup({title: _('Zoom')});

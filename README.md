@@ -18,6 +18,8 @@ edges and with displays arranged above, below or to the left of each other.
 
 Choose a **frame and symbol color** for all four views. The lens follows your
 pointer and scales down to fit the current monitor, including its frame and handle.
+Select a shape by clicking one of the **four illustrated tiles at the top of the
+preferences**. The selected tile is highlighted; the matching size controls appear below.
 
 ## Why Monitor Loupe
 
