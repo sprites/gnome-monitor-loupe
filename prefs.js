@@ -23,7 +23,7 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         });
         page.add(lens);
         const shapes = ['rectangle', 'loupe', 'binoculars', 'telescope'];
-        const titles = [_('Rectangle'), _('Magnifying glass'), _('Binoculars'), _('Telescope')];
+        const titles = [_('Rectangle'), _('Magnifier'), _('Binoculars'), _('Telescope')];
         const shapeGrid = new Gtk.Box({
             orientation: Gtk.Orientation.HORIZONTAL, homogeneous: true,
             spacing: 8, margin_top: 8, margin_bottom: 8,

@@ -8,9 +8,9 @@ edges and with displays arranged above, below or to the left of each other.
 
 ## Choose your lens
 
-| Rectangle | Magnifying glass | Binoculars | Telescope |
+| Rectangle | Magnifier | Binoculars | Telescope |
 | :---: | :---: | :---: | :---: |
-| ![Rectangle icon](docs/icons/rectangle.svg) | ![Magnifying glass icon](docs/icons/loupe.svg) | ![Binoculars icon](docs/icons/binoculars.svg) | ![Telescope icon](docs/icons/telescope.svg) |
+| ![Rectangle icon](docs/icons/rectangle.svg) | ![Magnifier icon](docs/icons/loupe.svg) | ![Binoculars icon](docs/icons/binoculars.svg) | ![Telescope icon](docs/icons/telescope.svg) |
 | Classic rectangular view | Round lens with a handle | Two overlapping lenses | Round view with a broad rim |
 | Width, height and frame thickness | Adjustable radius | Adjustable radius per lens | Adjustable radius |
 
@@ -42,7 +42,7 @@ Actual captures of the current preferences window (appearance section).
 
 **Round shapes — radius and color**
 
-![Magnifying glass preferences with radius and color](docs/preferences-round-en.png)
+![Magnifier preferences with radius and color](docs/preferences-round-en.png)
 
 Click the color swatch to choose a color. Set rectangle frame thickness to **0**
 to hide its border. Appearance changes apply immediately.

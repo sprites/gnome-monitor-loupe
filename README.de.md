@@ -7,7 +7,7 @@ bleibt. Auch der vergrößerte Quellbereich bleibt innerhalb dieses Monitors.
 
 ## Wähle deine Lupenansicht
 
-| Rechteck | Lupe mit Griff | Feldstecher | Fernrohr |
+| Rechteck | Lupe | Feldstecher | Fernrohr |
 | :---: | :---: | :---: | :---: |
 | ![Rechteck-Symbol](docs/icons/rectangle.svg) | ![Lupen-Symbol](docs/icons/loupe.svg) | ![Feldstecher-Symbol](docs/icons/binoculars.svg) | ![Fernrohr-Symbol](docs/icons/telescope.svg) |
 | Klassische rechteckige Ansicht | Runde Linse mit Griff | Zwei überlappende Linsen | Runde Ansicht mit breitem Rahmen |
@@ -30,7 +30,7 @@ Aktuelle Aufnahmen des Einstellungsfensters, jeweils mit dem Bereich „Lupenans
 
 **Runde Formen — Radius und Farbe**
 
-![Einstellungen der Lupe mit Griff, Radius und Farbauswahl](docs/preferences-round-de.png)
+![Einstellungen der Lupe, Radius und Farbauswahl](docs/preferences-round-de.png)
 
 Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
 du den Rechteckrahmen aus. Änderungen an der Ansicht werden sofort übernommen.
@@ -56,7 +56,7 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   Zoomschritt. Zunächst sind keine belegt, um bestehende Kürzel zu erhalten.
   Kürzel anklicken und die neue Kombination drücken. Rücktaste deaktiviert,
   Escape bricht ab. Eine noch freie Kombination wählen.
-- **Form:** Rechteck (Standard), runde Lupe mit Griff, Feldstecher mit zwei
+- **Form:** Rechteck (Standard), runde Lupe, Feldstecher mit zwei
   überlappenden Linsen oder Fernrohr. Außerhalb der Form
   bleibt der normale Desktop sichtbar.
 - **Radius:** für die runden Formen von 60 bis 2160 logischen Pixeln wählbar,
