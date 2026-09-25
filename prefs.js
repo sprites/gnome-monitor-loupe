@@ -200,7 +200,9 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         const rgba = new Gdk.RGBA();
         rgba.parse(frameColor(settings.get_string('frame-color')));
         cr.save();
-        cr.scale(width / 160, height / 160);
+        const size = Math.min(width, height);
+        cr.translate((width - size) / 2, (height - size) / 2);
+        cr.scale(size / 160, size / 160);
         cr.setSourceRGBA(rgba.red, rgba.green, rgba.blue, 1);
         cr.setLineWidth(8);
         cr.setLineCap(Cairo.LineCap.ROUND);
