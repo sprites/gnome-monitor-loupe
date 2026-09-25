@@ -112,6 +112,11 @@ Bewusste Zoomaktionen ändern den Zoomfaktor und den Ein/Aus-Zustand der Systeml
 `make test` prüft Geometrie, Zoom und den Lebenszyklus mit einer simulierten Shell.
 `make pack` erstellt das installierbare ZIP in `dist/`.
 
+Der abgestimmte Ablauf für GNOME- und GitHub-Releases steht in der
+[Release-Anleitung](docs/release.de.md). `make release-candidate` baut zuerst
+das GNOME-Upload-Paket mit der nächsten Nummer, ohne die Versionsnummer auf
+GitHub oder lokal vorwegzunehmen.
+
 Die Erweiterung verwendet interne GNOME-50-Methoden. Andere GNOME-Versionen sind
 noch nicht freigegeben. Vor einer stabilen Veröffentlichung sind Praxistests mit
 Mausrad, Monitorwechseln, unterschiedlicher Skalierung und Sperren/Entsperren nötig.
