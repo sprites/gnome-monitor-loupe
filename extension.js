@@ -7,7 +7,6 @@ import St from 'gi://St';
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
-import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import {lensGeometry, insideLens, shapeSize} from './geometry.js';
 import {createLensEffect} from './appearance.js';
 import {frameColor} from './color.js';
@@ -168,15 +167,20 @@ export default class MonitorLoupe extends Extension {
     _addIndicator() {
         if (!Main.panel || typeof PanelMenu === 'undefined')
             return;
-        this._indicator = new PanelMenu.Button(0.0, 'Monitor Loupe');
-        this._indicator.add_child(new St.Icon({
+        this._indicator = new PanelMenu.Button(0.0, 'Monitor Loupe', true);
+        this._indicator.can_focus = false;
+        const preferences = new St.Button({
+            accessible_name: 'Monitor Loupe',
+            can_focus: true,
+            track_hover: true,
+        });
+        preferences.set_child(new St.Icon({
             gicon: Gio.FileIcon.new(Gio.file_new_for_path(`${this.path}/monitor-loupe.svg`)),
             icon_size: 24,
             style_class: 'system-status-icon',
         }));
-        const preferences = new PopupMenu.PopupMenuItem('Monitor Loupe Einstellungen');
-        preferences.connect('activate', () => this.openPreferences());
-        this._indicator.menu.addMenuItem(preferences);
+        preferences.connect('clicked', () => this.openPreferences());
+        this._indicator.add_child(preferences);
         Main.panel.addToStatusArea(this.uuid, this._indicator);
     }
 
