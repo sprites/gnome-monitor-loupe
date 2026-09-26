@@ -88,7 +88,8 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         });
         colorButton.child = colorSwatch;
         const colorChooser = new Gtk.ColorChooserWidget({use_alpha: false, show_editor: false});
-        colorButton.set_popover(new Gtk.Popover({child: colorChooser}));
+        const colorPopover = new Gtk.Popover({child: colorChooser});
+        colorButton.set_popover(colorPopover);
         let updatingColor = false;
         const updateColor = () => {
             const rgba = new Gdk.RGBA();
@@ -102,6 +103,12 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
                 area.queue_draw();
         };
         updateColor();
+        colorPopover.connect('map', () => {
+            // Start each visit at the palette, even after editing a custom color.
+            updatingColor = true;
+            colorChooser.show_editor = false;
+            updatingColor = false;
+        });
         colorChooser.connect('notify::rgba', () => {
             if (updatingColor)
                 return;
@@ -110,7 +117,9 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
                 .map(channel => Math.round(channel * 255).toString(16).padStart(2, '0')).join('');
             if (hex !== settings.get_string('frame-color'))
                 settings.set_string('frame-color', hex);
-            colorButton.popdown();
+            // The editor emits changes while mixing a color; keep it open.
+            if (!colorChooser.show_editor)
+                colorButton.popdown();
         });
         connections.push([settings, settings.connect('changed::frame-color', updateColor)]);
         colorRow.add_suffix(colorButton);
