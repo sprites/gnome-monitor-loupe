@@ -23,12 +23,12 @@ preferences**. The selected tile is highlighted; the matching size controls appe
 
 ## See the views in motion
 
-The animation illustrates the magnified area moving across a desktop and cycles
-through all four available shapes. **Shift + Ctrl + Super + scroll wheel** enlarges
+The animation shows the lens swooping back and forth while repeatedly growing
+and shrinking, with smooth transitions between all four shapes. **Shift + Ctrl + Super + scroll wheel** enlarges
 and shrinks the lens window: rectangles scale proportionally, while round shapes
 change their radius. Content magnification stays unchanged.
 
-![Animated preview of all four lens shapes with the lens window growing and shrinking](docs/monitor-loupe-demo-v14.gif)
+![Animated preview of all four lens shapes with the lens window growing and shrinking](docs/monitor-loupe-demo-v14-motion.gif)
 
 *The desktop scene is an illustration, not a capture of a live GNOME session.*
 [Static PNG preview](docs/monitor-loupe-demo.png)

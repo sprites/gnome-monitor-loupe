@@ -24,12 +24,12 @@ Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenreg
 
 ## Die Lupenansichten in Bewegung
 
-Die Animation zeigt, wie der vergrösserte Ausschnitt über einen Desktop wandert
-und dabei alle vier verfügbaren Formen durchläuft. Mit **Umschalt + Strg + Super +
+Die Animation zeigt, wie die Linse schwungvoll hin und her wandert, dabei
+mehrfach größer und kleiner wird und weich zwischen allen vier Formen wechselt. Mit **Umschalt + Strg + Super +
 Mausrad** lässt sich das Lupenfenster vergrössern und verkleinern: beim Rechteck
 proportional, bei runden Formen über den Radius. Die Vergrößerungsstufe bleibt gleich.
 
-![Animation aller vier Lupenformen mit größer und kleiner werdendem Lupenfenster](docs/monitor-loupe-demo-v14.gif)
+![Animation aller vier Lupenformen mit größer und kleiner werdendem Lupenfenster](docs/monitor-loupe-demo-v14-motion.gif)
 
 *Die Desktop-Szene ist eine Illustration und keine Live-Aufnahme von GNOME.*
 [Statisches PNG-Vorschaubild](docs/monitor-loupe-demo.png)

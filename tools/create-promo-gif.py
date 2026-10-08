@@ -151,27 +151,30 @@ def render():
     desktop = make_desktop()
     frames = []
     modes = [("rectangle", "RECHTECK"), ("loupe", "LUPE"), ("binoculars", "FELDSTECHER"), ("telescope", "FERNROHR")]
-    small, large = .65, 1.4
+    ticks_per_mode = 48
+    transition_ticks = 7
     preview_frames = []
     for mode_index, (shape, label) in enumerate(modes):
-        route = []
-        # Pause the pointer during resizing to make the changing aperture clear.
-        for tick in range(8):
-            t = tick / 7
-            eased = t * t * (3 - 2 * t)
-            route.append((round(222 + 258 * eased), round(242 + 18 * eased), small, "FOLGT DEM MAUSZEIGER"))
-        for start, end, caption in [(small, large, "LINSE VERGRÖSSERN"), (large, small, "LINSE VERKLEINERN")]:
-            for tick in range(16):
-                t = tick / 15
-                eased = t * t * (3 - 2 * t)
-                route.append((480, 260, start + (end - start) * eased, caption))
-            route.extend([(480, 260, end, caption)] * 4)
-        for tick in range(8):
-            t = tick / 7
-            eased = t * t * (3 - 2 * t)
-            route.append((round(480 + 276 * eased), round(260 + 80 * eased), small, "FOLGT DEM MAUSZEIGER"))
-        for frame_index, (x, y, scale, caption) in enumerate(route):
+        next_shape, next_label = modes[(mode_index + 1) % len(modes)]
+        for frame_index in range(ticks_per_mode):
+            phase = 2 * math.pi * frame_index / ticks_per_mode
+            # A continuous swooping path with two size pulses per form. The
+            # loop closes smoothly, including the last-to-first shape change.
+            x = round(480 + 210 * math.sin(phase) + 14 * math.sin(3 * phase + .3))
+            y = round(240 + 52 * math.sin(2 * phase))
+            scale = 1.075 - .525 * math.cos(2 * phase)
+            caption = "LINSE VERGRÖSSERN" if math.sin(2 * phase) >= 0 else "LINSE VERKLEINERN"
             frame = draw_lens(desktop, shape, x, y, scale)
+            visible_label = label
+            visible_mode = mode_index
+            if frame_index >= ticks_per_mode - transition_ticks:
+                t = (frame_index - (ticks_per_mode - transition_ticks)) / (transition_ticks - 1)
+                blend = t * t * (3 - 2 * t)
+                frame = Image.blend(frame, draw_lens(desktop, next_shape, x, y, scale), blend)
+                caption = "FORMWECHSEL"
+                if blend >= .5:
+                    visible_label = next_label
+                    visible_mode = (mode_index + 1) % len(modes)
             d = ImageDraw.Draw(frame, "RGBA")
             # Separate window size from content zoom in the caption.
             rounded(d, (235, 44, 725, 79), 12, (8, 14, 29, 225), (93, 200, 237, 110), 1)
@@ -181,11 +184,11 @@ def render():
             d.text((W / 2, 448), caption, anchor="mm", font=font(16, True), fill=(234, 248, 255, 255))
             # Mode caption and progress markers.
             rounded(d, (24, 455, 207, 505), 16, (8, 14, 29, 205), (93, 200, 237, 110), 1)
-            d.text((42, 470), label, font=font(17, True), fill=(234, 248, 255, 255))
+            d.text((42, 470), visible_label, font=font(17, True), fill=(234, 248, 255, 255))
             for i in range(4):
-                d.ellipse((797 + i * 31, 488, 811 + i * 31, 502), fill=(42, 220, 243, 250) if i == mode_index else (180, 201, 231, 90))
+                d.ellipse((797 + i * 31, 488, 811 + i * 31, 502), fill=(42, 220, 243, 250) if i == visible_mode else (180, 201, 231, 90))
             frames.append(frame)
-            if mode_index < 2 and frame_index in (8, 23, 43):
+            if mode_index < 2 and frame_index in (0, 12, 24):
                 preview_frames.append(frame.copy())
     OUT.mkdir(exist_ok=True)
     # Save a crisp PNG poster using a scene that highlights the loupe.
@@ -206,7 +209,7 @@ def render():
         samples.paste(frame.resize((240, 135)), ((index % 4) * 240, (index // 4) * 135))
     palette = samples.quantize(colors=128, method=Image.Quantize.MEDIANCUT)
     palette_frames = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
-    palette_frames[0].save(OUT / "monitor-loupe-demo-v14.gif", save_all=True, append_images=palette_frames[1:], duration=90, loop=0, optimize=True, disposal=1)
+    palette_frames[0].save(OUT / "monitor-loupe-demo-v14-motion.gif", save_all=True, append_images=palette_frames[1:], duration=60, loop=0, optimize=True, disposal=1)
 
 
 if __name__ == "__main__":
