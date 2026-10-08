@@ -45,7 +45,7 @@ Monitor Loupe is designed for people who work with large or multiple displays:
 
 ## Settings preview
 
-Actual captures of the current preferences window (appearance section).
+Captures of the lens appearance and zoom settings.
 
 **Rectangle — dimensions, frame thickness and color**
 
@@ -57,6 +57,13 @@ Actual captures of the current preferences window (appearance section).
 
 Click the color swatch to choose a color. Set frame thickness to **0**
 to hide the border on every shape. Appearance changes apply immediately.
+
+**Scroll-wheel zoom — shortcut and on/off switch**
+
+![Scroll-wheel zoom with Ctrl + Super, the on/off switch beside it and the zoom step](docs/preferences-zoom-en.png)
+
+Click the shortcut button to change the modifier combination.
+The switch beside it enables or disables scroll-wheel zoom.
 
 ## Controls and preferences
 

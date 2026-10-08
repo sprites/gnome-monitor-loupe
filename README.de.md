@@ -34,7 +34,7 @@ und dabei alle vier verfügbaren Formen durchläuft.
 
 ## Neue Einstellungen im Bild
 
-Aktuelle Aufnahmen des Einstellungsfensters, jeweils mit dem Bereich „Lupenansicht“.
+Aufnahmen der Einstellungsbereiche „Lupenansicht“ und „Vergrößerung“.
 
 **Rechteck — Abmessungen, Rahmendicke und Farbe**
 
@@ -46,6 +46,13 @@ Aktuelle Aufnahmen des Einstellungsfensters, jeweils mit dem Bereich „Lupenans
 
 Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
 du den Rahmen aller Formen aus. Änderungen an der Ansicht werden sofort übernommen.
+
+**Mausrad-Zoom — Tastenkombination und Ein-/Aus-Schalter**
+
+![Mausrad-Zoom mit Strg + Super, dem Ein-/Aus-Schalter direkt daneben und dem Zoomschritt](docs/preferences-zoom-de.png)
+
+Die Tastenkombination lässt sich direkt über den Kürzel-Button ändern.
+Der Schalter rechts daneben aktiviert oder deaktiviert den Mausrad-Zoom.
 
 ## Einstellungen
 
