@@ -209,7 +209,7 @@ def render():
         samples.paste(frame.resize((240, 135)), ((index % 4) * 240, (index // 4) * 135))
     palette = samples.quantize(colors=128, method=Image.Quantize.MEDIANCUT)
     palette_frames = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
-    palette_frames[0].save(OUT / "monitor-loupe-demo-v14-motion.gif", save_all=True, append_images=palette_frames[1:], duration=60, loop=0, optimize=True, disposal=1)
+    palette_frames[0].save(OUT / "monitor-loupe-demo-v14-slow.gif", save_all=True, append_images=palette_frames[1:], duration=120, loop=0, optimize=True, disposal=1)
 
 
 if __name__ == "__main__":

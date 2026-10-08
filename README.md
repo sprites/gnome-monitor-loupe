@@ -28,7 +28,7 @@ and shrinking, with smooth transitions between all four shapes. **Shift + Ctrl +
 and shrinks the lens window: rectangles scale proportionally, while round shapes
 change their radius. Content magnification stays unchanged.
 
-![Animated preview of all four lens shapes with the lens window growing and shrinking](docs/monitor-loupe-demo-v14-motion.gif)
+![Animated preview of all four lens shapes with the lens window growing and shrinking](docs/monitor-loupe-demo-v14-slow.gif)
 
 *The desktop scene is an illustration, not a capture of a live GNOME session.*
 [Static PNG preview](docs/monitor-loupe-demo.png)
