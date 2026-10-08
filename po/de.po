@@ -55,8 +55,32 @@ msgstr "Höhe"
 msgid "Zoom"
 msgstr "Vergrößerung"
 
-msgid "Super + Alt + scroll wheel"
-msgstr "Super + Alt + Mausrad"
+msgid "Scroll wheel zoom"
+msgstr "Mausrad-Zoom"
+
+msgid "Scroll wheel modifiers"
+msgstr "Tastenkombination für Mausrad-Zoom"
+
+msgid "Hold these keys while scrolling. Include Super to zoom over application windows."
+msgstr "Diese Tasten beim Scrollen gedrückt halten. Mit Super funktioniert der Zoom auch über Anwendungsfenstern."
+
+msgid "Ctrl"
+msgstr "Strg"
+
+msgid "Alt"
+msgstr "Alt"
+
+msgid "Shift"
+msgstr "Umschalt"
+
+msgid "Super"
+msgstr "Super"
+
+msgid "Press the modifier keys together and release them. Backspace disables; Escape cancels."
+msgstr "Die gewünschten Zusatztasten zusammen drücken und loslassen. Rücktaste deaktiviert, Escape bricht ab."
+
+msgid "Use only Ctrl, Alt, Shift or Super."
+msgstr "Nur Strg, Alt, Umschalt oder Super verwenden."
 
 msgid "Scroll up to zoom in, down to zoom out. Use only one scroll-zoom extension at a time."
 msgstr "Nach oben vergrößern, nach unten verkleinern. Nur eine Erweiterung gleichzeitig für Mausrad-Zoom verwenden."

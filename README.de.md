@@ -55,8 +55,16 @@ In der App **Erweiterungen** bei Monitor Loupe auf die Einstellungen klicken, od
 gnome-extensions prefs monitor-loupe@sprites.github.io
 ```
 
-- **Super + Alt + Mausrad** ist standardmäßig aktiv. Nach oben vergrößert,
-  nach unten verkleinert. Die Funktion lässt sich ausschalten.
+- **Strg + Super + Mausrad** ist standardmäßig aktiv. Nach oben vergrößert,
+  nach unten verkleinert. Unter **Vergrößerung → Tastenkombination für Mausrad-Zoom**
+  den Tastenkürzel-Button anklicken, die gewünschte Kombination aus Strg, Alt,
+  Umschalt und Super zusammen drücken und loslassen. Die Kombination wird direkt
+  übernommen; Escape bricht ab, Rücktaste deaktiviert den Mausrad-Zoom.
+  Der Ein-/Aus-Schalter direkt rechts neben dem Tastenkürzel-Button schaltet die
+  Funktion um. Die gewählte Kombination bleibt dabei erhalten und lässt sich
+  auch bei ausgeschaltetem Mausrad-Zoom ändern.
+  Mit Super funktioniert der Zoom bei GNOMEs Standard-Compositor-Modifikator
+  auch über Anwendungsfenstern.
 - **Zoomschritt:** standardmäßig 0,25×, einstellbar von 0,05× bis 5×.
   Beispiel: 2× → 2,25×. Die maximale Vergrößerung ist 32×.
 - Aus dem ausgeschalteten Zustand beginnt der Zoom bei 1× plus einem Schritt.

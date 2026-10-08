@@ -146,12 +146,31 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
 
         const zoom = new Adw.PreferencesGroup({title: _('Zoom')});
         page.add(zoom);
-        const scroll = new Adw.SwitchRow({
-            title: _('Super + Alt + scroll wheel'),
-            subtitle: _('Scroll up to zoom in, down to zoom out. Use only one scroll-zoom extension at a time.'),
+        const modifiers = new Adw.ActionRow({
+            title: _('Scroll wheel modifiers'),
+            subtitle: _('Hold these keys while scrolling. Include Super to zoom over application windows.'),
         });
-        zoom.add(scroll);
-        settings.bind('scroll-zoom', scroll, 'active', Gio.SettingsBindFlags.DEFAULT);
+        const scrollControls = new Gtk.Box({spacing: 12, valign: Gtk.Align.CENTER});
+        const modifierButton = new Gtk.Button({valign: Gtk.Align.CENTER});
+        const scrollSwitch = new Gtk.Switch({
+            valign: Gtk.Align.CENTER, tooltip_text: _('Scroll wheel zoom'),
+        });
+        scrollSwitch.update_property([Gtk.AccessibleProperty.LABEL], [_('Scroll wheel zoom')]);
+        scrollControls.append(modifierButton);
+        scrollControls.append(scrollSwitch);
+        modifiers.add_suffix(scrollControls);
+        modifiers.activatable_widget = modifierButton;
+        zoom.add(modifiers);
+        settings.bind('scroll-zoom', scrollSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
+        const updateModifiers = () => {
+            modifierButton.label = this._modifierLabel(settings.get_int('scroll-zoom-modifiers'));
+            modifierButton.sensitive = settings.is_writable('scroll-zoom-modifiers');
+        };
+        updateModifiers();
+        modifierButton.connect('clicked', () => this._capture(window, {
+            settings, key: 'scroll-zoom-modifiers', title: _('Scroll wheel modifiers'), modifiersOnly: true,
+        }, []));
+        connections.push([settings, settings.connect('changed::scroll-zoom-modifiers', updateModifiers)]);
         const step = this._spin(zoom, settings, 'zoom-step', _('Zoom step'), 0.05, 5, 0.05, 2);
         step.subtitle = _('Added per step: 0.25 means 2× → 2.25×. Zooming out to 1× turns the lens off. Maximum: 32×.');
 
@@ -261,6 +280,11 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         cr.restore();
     }
 
+    _modifierLabel(value) {
+        return [_('Ctrl'), _('Alt'), _('Shift'), _('Super')]
+            .filter((_name, bit) => value & (1 << bit)).join(' + ');
+    }
+
     _capture(parent, binding, reserved) {
         const dialog = new Adw.Window({
             title: binding.title, transient_for: parent, modal: true,
@@ -269,22 +293,61 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         const box = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 24});
         box.append(new Adw.HeaderBar());
         const prompt = new Gtk.Label({
-            label: _('Press your new shortcut'), wrap: true,
+            label: binding.modifiersOnly
+                ? _('Press the modifier keys together and release them. Backspace disables; Escape cancels.')
+                : _('Press your new shortcut'), wrap: true,
             margin_start: 24, margin_end: 24, margin_bottom: 24,
         });
         box.append(prompt);
+        let selectedModifiers = 0;
+        let captureModifiers;
+        const capturedKeys = new Set();
+        if (binding.modifiersOnly) {
+            // Wait for release so the first modifier does not finish the chord.
+            const modifierKeys = new Map([
+                [Gdk.KEY_Control_L, 1], [Gdk.KEY_Control_R, 1],
+                [Gdk.KEY_Alt_L, 2], [Gdk.KEY_Alt_R, 2],
+                [Gdk.KEY_Shift_L, 4], [Gdk.KEY_Shift_R, 4],
+                [Gdk.KEY_Super_L, 8], [Gdk.KEY_Super_R, 8],
+            ]);
+            captureModifiers = (keyval, state) => {
+                const pressed = modifierKeys.get(keyval);
+                if (!pressed) {
+                    prompt.label = _('Use only Ctrl, Alt, Shift or Super.');
+                    selectedModifiers = 0;
+                    capturedKeys.clear();
+                    return;
+                }
+                capturedKeys.add(keyval);
+                selectedModifiers = pressed |
+                    (state & Gdk.ModifierType.CONTROL_MASK ? 1 : 0) |
+                    (state & Gdk.ModifierType.ALT_MASK ? 2 : 0) |
+                    (state & Gdk.ModifierType.SHIFT_MASK ? 4 : 0) |
+                    (state & Gdk.ModifierType.SUPER_MASK ? 8 : 0);
+                prompt.label = this._modifierLabel(selectedModifiers);
+            };
+        }
         dialog.content = box;
         const controller = new Gtk.EventControllerKey();
         controller.set_name('monitor-loupe-shortcut-capture');
         controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
         controller.connect('key-pressed', (_controller, keyval, _keycode, state) => {
             if (keyval === Gdk.KEY_Escape) {
+                capturedKeys.clear();
                 dialog.close();
                 return true;
             }
             if (keyval === Gdk.KEY_BackSpace) {
-                binding.settings.set_strv(binding.key, []);
+                capturedKeys.clear();
+                if (binding.modifiersOnly)
+                    binding.settings.set_boolean('scroll-zoom', false);
+                else
+                    binding.settings.set_strv(binding.key, []);
                 dialog.close();
+                return true;
+            }
+            if (binding.modifiersOnly) {
+                captureModifiers(keyval, state);
                 return true;
             }
             const mods = state & Gtk.accelerator_get_default_mod_mask();
@@ -310,6 +373,15 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
             dialog.close();
             return true;
         });
+        if (binding.modifiersOnly) {
+            controller.connect('key-released', (_controller, keyval) => {
+                if (capturedKeys.has(keyval) && selectedModifiers) {
+                    capturedKeys.clear();
+                    binding.settings.set_int(binding.key, selectedModifiers);
+                    dialog.close();
+                }
+            });
+        }
         dialog.add_controller(controller);
         dialog.present();
     }

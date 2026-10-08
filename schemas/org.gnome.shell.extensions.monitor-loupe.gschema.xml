@@ -37,7 +37,12 @@
     </key>
     <key name="scroll-zoom" type="b">
       <default>true</default>
-      <summary>Zoom with Super+Alt and the scroll wheel</summary>
+      <summary>Zoom with the configured modifiers and the scroll wheel</summary>
+    </key>
+    <key name="scroll-zoom-modifiers" type="i">
+      <default>9</default>
+      <range min="1" max="15"/>
+      <summary>Scroll zoom modifiers: Ctrl=1, Alt=2, Shift=4, Super=8</summary>
     </key>
     <key name="zoom-step" type="d">
       <default>0.25</default>

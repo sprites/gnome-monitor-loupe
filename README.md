@@ -66,8 +66,15 @@ Open Monitor Loupe’s preferences in the GNOME Extensions app, or run:
 gnome-extensions prefs monitor-loupe@sprites.github.io
 ```
 
-- **Super + Alt + scroll wheel** zooms in and out, enabled by default. It can be
-  disabled in preferences. Vertical smooth scrolling is accumulated into steps.
+- **Ctrl + Super + scroll wheel** zooms in and out, enabled by default. Under
+  **Zoom → Scroll wheel modifiers**, click the shortcut button, press the desired
+  combination of Ctrl, Alt, Shift and Super together, then release the keys.
+  The combination is saved immediately; Escape cancels and Backspace disables
+  scroll zoom. The on/off switch directly to the right of the shortcut button
+  toggles the feature while preserving the chosen combination. You can edit the
+  combination even when scroll zoom is off.
+  Include Super to zoom over application windows with GNOME’s default compositor
+  modifier. Vertical smooth scrolling is accumulated into steps.
 - **Zoom step** is adjustable from 0.05× to 5×. The default adds or subtracts
   0.25× per step; for example, 2× → 2.25×. Maximum magnification is 32×.
 - Zooming in from off starts at 1× plus one step. Zooming out to 1× turns the

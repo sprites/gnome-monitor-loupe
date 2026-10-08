@@ -49,7 +49,7 @@ const source = readFileSync(new URL('./extension.js', import.meta.url), 'utf8')
     .replace('export default class MonitorLoupe', 'class MonitorLoupe');
 const settings = new Settings({
     'lens-width': 640, 'lens-height': 360, 'zoom-step': 0.25, 'scroll-zoom': true,
-    'lens-shape': 'rectangle', 'lens-radius': 300,
+    'lens-shape': 'rectangle', 'lens-radius': 300, 'scroll-zoom-modifiers': 9,
     'frame-color': '#242b33', 'rectangle-border-width': 2,
 });
 const a11y = new Settings({'screen-magnifier-enabled': false});
@@ -114,7 +114,7 @@ const ExtensionClass = vm.runInNewContext(`${source}\nMonitorLoupe;`, {
 });
 const extension = new ExtensionClass();
 let eventTime = 100;
-const scroll = (direction, state = 5, dy = 0, dx = 0) => stage.emit('captured-event', {
+const scroll = (direction, state = 9, dy = 0, dx = 0) => stage.emit('captured-event', {
     type: () => 1, get_state: () => state, get_scroll_direction: () => direction,
     get_scroll_delta: () => [dx, dy], get_time: () => eventTime++,
 });
@@ -195,7 +195,7 @@ assert.equal(scroll(0), true);
 assert.equal(a11y.values['screen-magnifier-enabled'], true);
 assert.equal(magnifierSettings.values['mag-factor'], 1.25);
 const workspaceHandler = Main.wm.handleWorkspaceScroll;
-assert.equal(workspaceHandler({type: () => 1, get_state: () => 5,
+assert.equal(workspaceHandler({type: () => 1, get_state: () => 9,
     get_scroll_direction: () => 0, get_scroll_delta: () => [0, 1], get_time: () => 1}), true,
     'Events forwarded by GNOME over application windows must zoom');
 assert.equal(magnifierSettings.values['mag-factor'], 1.5);
@@ -212,13 +212,39 @@ assert.equal(magnifierSettings.values['mag-factor'], 1.25, 'Keep a usable factor
 scroll(1);
 assert.equal(a11y.values['screen-magnifier-enabled'], false);
 
-scroll(2, 5, -0.4);
+scroll(2, 9, -0.4);
 assert.equal(a11y.values['screen-magnifier-enabled'], false);
-scroll(2, 5, -0.6);
+scroll(2, 9, -0.6);
 assert.equal(a11y.values['screen-magnifier-enabled'], true);
 assert.equal(magnifierSettings.values['mag-factor'], 1.5);
-assert.equal(scroll(2, 5, 0, 1), false, 'Horizontal gestures must pass through');
-assert.equal(scroll(0, 5 | 8), false, 'Extra modifiers must pass through');
+assert.equal(scroll(2, 9, 0, 1), false, 'Horizontal gestures must pass through');
+assert.equal(scroll(0, 9 | 4), false, 'Extra modifiers must pass through');
+assert.equal(scroll(0, 5), false, 'The old Super+Alt default must pass through');
+assert.equal(scroll(0, 8 | 2), true, 'MOD4 must also count as Super');
+assert.equal(scroll(0, 8 | 1 | 2), true, 'Both Super masks must count as one modifier');
+// Every selectable combination must match exactly and apply without restarting.
+for (let configured = 1; configured <= 15; configured++) {
+    settings.values['scroll-zoom-modifiers'] = configured;
+    settings.emit('changed', 'scroll-zoom-modifiers');
+    for (let held = 0; held <= 15; held++) {
+        const state = (held & 1 ? 8 : 0) | (held & 2 ? 4 : 0) |
+            (held & 4 ? 16 : 0) | (held & 8 ? 1 : 0);
+        assert.equal(scroll(0, state), held === configured,
+            `Configured modifiers ${configured}, held ${held}`);
+    }
+}
+settings.values['scroll-zoom-modifiers'] = 9;
+magnifierSettings.values['mag-factor'] = 2;
+// Partial smooth scrolling must not carry over to a new combination.
+scroll(2, 9, -0.4);
+settings.values['scroll-zoom-modifiers'] = 10;
+settings.emit('changed', 'scroll-zoom-modifiers');
+const factorBefore = magnifierSettings.values['mag-factor'];
+scroll(2, 5, -0.6);
+assert.equal(magnifierSettings.values['mag-factor'], factorBefore);
+scroll(2, 5, -0.4);
+assert.equal(magnifierSettings.values['mag-factor'], factorBefore + 0.5);
+settings.values['scroll-zoom-modifiers'] = 9;
 settings.values['scroll-zoom'] = false;
 assert.equal(scroll(0), false);
 settings.values['scroll-zoom'] = true;

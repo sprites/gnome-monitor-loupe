@@ -231,12 +231,16 @@ export default class MonitorLoupe extends Extension {
         if (event.type() !== Clutter.EventType.SCROLL)
             return Clutter.EVENT_PROPAGATE;
         const state = event.get_state();
-        const superHeld = state & (Clutter.ModifierType.SUPER_MASK | Clutter.ModifierType.MOD4_MASK);
-        const altHeld = state & Clutter.ModifierType.MOD1_MASK;
-        const extraHeld = state & (Clutter.ModifierType.CONTROL_MASK | Clutter.ModifierType.SHIFT_MASK);
+        // Store portable modifier bits rather than Clutter's platform masks.
+        // Super can be reported as its virtual mask, MOD4, or both.
+        const modifiers =
+            (state & Clutter.ModifierType.CONTROL_MASK ? 1 : 0) |
+            (state & Clutter.ModifierType.MOD1_MASK ? 2 : 0) |
+            (state & Clutter.ModifierType.SHIFT_MASK ? 4 : 0) |
+            (state & (Clutter.ModifierType.SUPER_MASK | Clutter.ModifierType.MOD4_MASK) ? 8 : 0);
         if (!this._settings.get_boolean('scroll-zoom') ||
             !(Main.actionMode & (Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW)) ||
-            !superHeld || !altHeld || extraHeld) {
+            modifiers !== this._settings.get_int('scroll-zoom-modifiers')) {
             this._scrollRemainder = 0;
             return Clutter.EVENT_PROPAGATE;
         }
