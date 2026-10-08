@@ -60,7 +60,7 @@ to hide the border on every shape. Appearance changes apply immediately.
 
 **Scroll-wheel controls — zoom and lens size**
 
-![Scroll-wheel zoom and lens size settings with separate shortcuts and on/off switches](docs/preferences-zoom-en.png)
+![Scroll-wheel zoom and lens size settings with separate shortcuts and on/off switches](docs/preferences-controls-v14-en.png)
 
 | Function | Default modifiers with the scroll wheel | Effect |
 | --- | --- | --- |

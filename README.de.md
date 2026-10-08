@@ -49,7 +49,7 @@ du den Rahmen aller Formen aus. Änderungen an der Ansicht werden sofort überno
 
 **Mausrad-Steuerung — Zoom und Lupengröße**
 
-![Einstellungen für Mausrad-Zoom und Lupengröße mit eigenen Tastenkürzeln und Ein-/Aus-Schaltern](docs/preferences-zoom-de.png)
+![Einstellungen für Mausrad-Zoom und Lupengröße mit eigenen Tastenkürzeln und Ein-/Aus-Schaltern](docs/preferences-controls-v14-de.png)
 
 | Funktion | Standardkombination mit Mausrad | Wirkung |
 | --- | --- | --- |
