@@ -146,31 +146,35 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
 
         const zoom = new Adw.PreferencesGroup({title: _('Zoom')});
         page.add(zoom);
-        const modifiers = new Adw.ActionRow({
-            title: _('Scroll wheel modifiers'),
-            subtitle: _('Hold these keys while scrolling. Include Super to zoom over application windows.'),
-        });
-        const scrollControls = new Gtk.Box({spacing: 12, valign: Gtk.Align.CENTER});
-        const modifierButton = new Gtk.Button({valign: Gtk.Align.CENTER});
-        const scrollSwitch = new Gtk.Switch({
-            valign: Gtk.Align.CENTER, tooltip_text: _('Scroll wheel zoom'),
-        });
-        scrollSwitch.update_property([Gtk.AccessibleProperty.LABEL], [_('Scroll wheel zoom')]);
-        scrollControls.append(modifierButton);
-        scrollControls.append(scrollSwitch);
-        modifiers.add_suffix(scrollControls);
-        modifiers.activatable_widget = modifierButton;
-        zoom.add(modifiers);
-        settings.bind('scroll-zoom', scrollSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
-        const updateModifiers = () => {
-            modifierButton.label = this._modifierLabel(settings.get_int('scroll-zoom-modifiers'));
-            modifierButton.sensitive = settings.is_writable('scroll-zoom-modifiers');
-        };
-        updateModifiers();
-        modifierButton.connect('clicked', () => this._capture(window, {
-            settings, key: 'scroll-zoom-modifiers', title: _('Scroll wheel modifiers'), modifiersOnly: true,
-        }, []));
-        connections.push([settings, settings.connect('changed::scroll-zoom-modifiers', updateModifiers)]);
+        const scrollBindings = [
+            {settings, key: 'scroll-zoom-modifiers', enabledKey: 'scroll-zoom',
+                title: _('Scroll wheel modifiers'),
+                subtitle: _('Hold these keys while scrolling. Include Super to zoom over application windows.')},
+            {settings, key: 'scroll-resize-modifiers', enabledKey: 'scroll-resize',
+                title: _('Scroll wheel lens size'),
+                subtitle: _('Scroll up to enlarge the lens, down to shrink it. Changes by about 10% per step, limited to the current monitor.')},
+        ];
+        for (const binding of scrollBindings) {
+            const row = new Adw.ActionRow({title: binding.title, subtitle: binding.subtitle});
+            const controls = new Gtk.Box({spacing: 12, valign: Gtk.Align.CENTER});
+            const button = new Gtk.Button({valign: Gtk.Align.CENTER});
+            const toggle = new Gtk.Switch({valign: Gtk.Align.CENTER, tooltip_text: binding.title});
+            toggle.update_property([Gtk.AccessibleProperty.LABEL], [binding.title]);
+            controls.append(button);
+            controls.append(toggle);
+            row.add_suffix(controls);
+            row.activatable_widget = button;
+            zoom.add(row);
+            settings.bind(binding.enabledKey, toggle, 'active', Gio.SettingsBindFlags.DEFAULT);
+            const update = () => {
+                button.label = this._modifierLabel(settings.get_int(binding.key));
+                button.sensitive = settings.is_writable(binding.key);
+            };
+            update();
+            button.connect('clicked', () => this._capture(window,
+                {...binding, modifiersOnly: true}, scrollBindings));
+            connections.push([settings, settings.connect(`changed::${binding.key}`, update)]);
+        }
         const step = this._spin(zoom, settings, 'zoom-step', _('Zoom step'), 0.05, 5, 0.05, 2);
         step.subtitle = _('Added per step: 0.25 means 2× → 2.25×. Zooming out to 1× turns the lens off. Maximum: 32×.');
 
@@ -340,7 +344,7 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
             if (keyval === Gdk.KEY_BackSpace) {
                 capturedKeys.clear();
                 if (binding.modifiersOnly)
-                    binding.settings.set_boolean('scroll-zoom', false);
+                    binding.settings.set_boolean(binding.enabledKey ?? 'scroll-zoom', false);
                 else
                     binding.settings.set_strv(binding.key, []);
                 dialog.close();
@@ -377,6 +381,13 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
             controller.connect('key-released', (_controller, keyval) => {
                 if (capturedKeys.has(keyval) && selectedModifiers) {
                     capturedKeys.clear();
+                    const conflict = reserved.find(other => other.key !== binding.key &&
+                        other.settings.get_int(other.key) === selectedModifiers);
+                    if (conflict) {
+                        prompt.label = `${_('Already used by:')} ${conflict.title}`;
+                        selectedModifiers = 0;
+                        return;
+                    }
                     binding.settings.set_int(binding.key, selectedModifiers);
                     dialog.close();
                 }

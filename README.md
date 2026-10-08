@@ -1,6 +1,6 @@
 # GNOME Monitor Loupe
 
-A pointer-following magnifier for **GNOME Shell 50**. At screen edges the lens
+A pointer-following magnifier for **GNOME Shell 48–51**. At screen edges the lens
 stays centered on the pointer and GNOME clips the part beyond the visible desktop.
 At monitor transitions the lens can extend onto a neighboring display.
 
@@ -58,12 +58,19 @@ Captures of the lens appearance and zoom settings.
 Click the color swatch to choose a color. Set frame thickness to **0**
 to hide the border on every shape. Appearance changes apply immediately.
 
-**Scroll-wheel zoom — shortcut and on/off switch**
+**Scroll-wheel controls — zoom and lens size**
 
-![Scroll-wheel zoom with Ctrl + Super, the on/off switch beside it and the zoom step](docs/preferences-zoom-en.png)
+![Scroll-wheel zoom and lens size settings with separate shortcuts and on/off switches](docs/preferences-zoom-en.png)
 
-Click the shortcut button to change the modifier combination.
-The switch beside it enables or disables scroll-wheel zoom.
+| Function | Default modifiers with the scroll wheel | Effect |
+| --- | --- | --- |
+| Zoom | Ctrl + Super | Changes the magnification of the content. |
+| Lens size | Shift + Ctrl + Super | Changes the radius or scales the rectangle proportionally. |
+
+To edit either combination, click its shortcut button, press the modifier keys
+together, then release them. Each adjacent switch enables or disables its
+function while preserving the chosen shortcut. A combination already assigned
+to the other scroll-wheel function is rejected when entering a new shortcut.
 
 ## Controls and preferences
 
@@ -84,6 +91,16 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   modifier. Vertical smooth scrolling is accumulated into steps.
 - **Zoom step** is adjustable from 0.05× to 5×. The default adds or subtracts
   0.25× per step; for example, 2× → 2.25×. Maximum magnification is 32×.
+- **Scroll-wheel lens size:** defaults to **Shift + Ctrl + Super + scroll wheel**.
+  Scroll up to enlarge the lens and down to shrink it. Round shapes change their
+  radius; rectangles scale width and height together to preserve their aspect ratio.
+  Each step scales the size by 1.1 or its inverse. The radius stays within
+  60–2160 logical pixels; rectangles stay within 160 × 90 and 7680 × 4320.
+  The upper limit also accounts for the monitor under the pointer. Magnification
+  stays unchanged. Edit the shortcut under **Zoom → Scroll wheel lens size**, or disable
+  it with the adjacent switch. Zoom and resizing use separate modifier combinations.
+  Size changes apply immediately and are saved. When editing the shortcut,
+  Backspace disables resizing and Escape cancels the edit.
 - Zooming in from off starts at 1× plus one step. Zooming out to 1× turns the
   magnifier off and preserves the last useful factor for the system toggle.
 - **Toggle magnifier** edits GNOME’s existing system shortcut. Click it and
@@ -156,12 +173,17 @@ pointer alignment, configurable dimensions, fractional zoom steps, input handlin
 and extension cleanup. Lifecycle tests use a simulated Shell boundary and do not
 replace testing on a real GNOME desktop.
 
-This extension uses internal GNOME magnifier methods and must be checked before
-adding support for another GNOME version. Scroll interception relies on GNOME’s
+Version 14 declares support for **GNOME Shell 48, 49, 50 and 51**.
+The extension has been used on GNOME 50. Compatibility checks against the original
+magnifier classes of GNOME 48, 49 and 51 passed with simulated desktop objects.
+Full desktop tests on those versions have not been performed; support is enabled
+on the basis of these preliminary checks.
+
+This extension uses internal GNOME magnifier methods. Scroll interception relies on GNOME’s
 compositor modifier (Super by default). Nonstandard compositor modifier settings
 can affect scroll zoom over application windows.
 
-Before a stable release, check on GNOME 50: toggle/zoom shortcuts, wheel events
+For runtime validation on each supported GNOME version, check: toggle/zoom shortcuts, wheel events
 over native Wayland and XWayland applications, smooth scrolling, monitor edges,
 mixed scaling, monitor hotplug, screen locking, and repeated enable/disable.
 

@@ -1,6 +1,25 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 const clamp = (value, low, high) => Math.max(low, Math.min(value, high));
 
+// Wheel resizing changes by 10% per step, preserving the rectangle's aspect.
+// Stop at both schema limits and the current monitor's logical dimensions.
+export function nextLensSize(width, height, radius, shape, direction, monitor) {
+    const factor = Math.pow(1.1, direction);
+    if (shape !== 'rectangle') {
+        const [w, h] = shapeSize(shape);
+        const maxRadius = Math.max(60, Math.floor(Math.min(2160, monitor.width / w, monitor.height / h)));
+        return {radius: Math.round(clamp(Math.min(radius, maxRadius) * factor, 60, maxRadius))};
+    }
+    const minimum = Math.max(160 / width, 90 / height);
+    const maximum = Math.max(minimum, Math.min(7680 / width, 4320 / height,
+        monitor.width / width, monitor.height / height));
+    // An oversized saved rectangle cannot grow further on a smaller monitor.
+    if (direction > 0 && maximum < 1)
+        return {width, height};
+    const scale = clamp(factor, minimum, maximum);
+    return {width: Math.round(width * scale), height: Math.round(height * scale)};
+}
+
 export function lensGeometry(monitors, px, py, xZoom, yZoom,
     requestedWidth = 640, requestedHeight = 360, shape = 'rectangle', radius = 300) {
     const monitor = monitors.find(m => px >= m.x && py >= m.y &&

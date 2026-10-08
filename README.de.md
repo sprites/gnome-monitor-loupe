@@ -1,6 +1,6 @@
 # GNOME Monitor Loupe
 
-Eine Lupe für **GNOME Shell 50**, die dem Mauszeiger folgt. An Bildschirmrändern
+Eine Lupe für **GNOME Shell 48–51**, die dem Mauszeiger folgt. An Bildschirmrändern
 bleibt sie auf dem Mauszeiger zentriert; GNOME schneidet nur den Teil ab, der
 ausserhalb des sichtbaren Desktops liegt. An Monitorübergängen kann die Lupe auf
 den Nachbarmonitor reichen.
@@ -47,12 +47,20 @@ Aufnahmen der Einstellungsbereiche „Lupenansicht“ und „Vergrößerung“.
 Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
 du den Rahmen aller Formen aus. Änderungen an der Ansicht werden sofort übernommen.
 
-**Mausrad-Zoom — Tastenkombination und Ein-/Aus-Schalter**
+**Mausrad-Steuerung — Zoom und Lupengröße**
 
-![Mausrad-Zoom mit Strg + Super, dem Ein-/Aus-Schalter direkt daneben und dem Zoomschritt](docs/preferences-zoom-de.png)
+![Einstellungen für Mausrad-Zoom und Lupengröße mit eigenen Tastenkürzeln und Ein-/Aus-Schaltern](docs/preferences-zoom-de.png)
 
-Die Tastenkombination lässt sich direkt über den Kürzel-Button ändern.
-Der Schalter rechts daneben aktiviert oder deaktiviert den Mausrad-Zoom.
+| Funktion | Standardkombination mit Mausrad | Wirkung |
+| --- | --- | --- |
+| Zoom | Strg + Super | Ändert die Vergrößerungsstufe des Inhalts. |
+| Lupengröße | Umschalt + Strg + Super | Ändert den Radius oder skaliert das Rechteck proportional. |
+
+Beide Tastenkombinationen lassen sich über ihren Kürzel-Button ändern:
+anklicken, die gewünschten Zusatztasten gemeinsam drücken und loslassen.
+Der jeweilige Schalter rechts daneben aktiviert oder deaktiviert die Funktion.
+Die gewählten Kürzel bleiben beim Ausschalten erhalten. Bereits für die andere
+Mausrad-Funktion verwendete Kombinationen werden beim Eingeben abgelehnt.
 
 ## Einstellungen
 
@@ -74,6 +82,18 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   auch über Anwendungsfenstern.
 - **Zoomschritt:** standardmäßig 0,25×, einstellbar von 0,05× bis 5×.
   Beispiel: 2× → 2,25×. Die maximale Vergrößerung ist 32×.
+- **Lupengröße per Mausrad:** standardmäßig **Umschalt + Strg + Super + Mausrad**.
+  Nach oben vergrößert die Linse, nach unten verkleinert sie. Runde Formen ändern
+  den Radius; beim Rechteck werden Breite und Höhe proportional skaliert.
+  Ein Schritt skaliert die Größe mit dem Faktor 1,1 beziehungsweise 1/1,1.
+  Der Radius bleibt zwischen 60 und 2160 logischen Pixeln; das Rechteck mindestens
+  160 × 90 und höchstens 7680 × 4320. Die Obergrenze berücksichtigt zusätzlich den
+  Monitor unter dem Mauszeiger. Die Vergrößerungsstufe bleibt dabei gleich.
+  Unter **Vergrößerung → Tastenkombination für Lupengröße** lässt sich das Kürzel ändern oder
+  die Funktion mit dem Schalter daneben ausschalten. Zoom und Größenänderung
+  verwenden unterschiedliche Tastenkombinationen. Die Größenänderung wird sofort
+  übernommen und gespeichert. Beim Bearbeiten des Kürzels deaktiviert Rücktaste
+  die Größensteuerung; Escape bricht die Eingabe ab.
 - Aus dem ausgeschalteten Zustand beginnt der Zoom bei 1× plus einem Schritt.
   Beim Verkleinern auf 1× wird die Lupe ausgeschaltet.
 - **Lupe ein-/ausschalten:** zeigt und bearbeitet das vorhandene GNOME-Kürzel
@@ -138,9 +158,15 @@ Der abgestimmte Ablauf für GNOME- und GitHub-Releases steht in der
 das GNOME-Upload-Paket mit der nächsten Nummer, ohne die Versionsnummer auf
 GitHub oder lokal vorwegzunehmen.
 
-Die Erweiterung verwendet interne GNOME-50-Methoden. Andere GNOME-Versionen sind
-noch nicht freigegeben. Vor einer stabilen Veröffentlichung sind Praxistests mit
-Mausrad, Monitorwechseln, unterschiedlicher Skalierung und Sperren/Entsperren nötig.
+Version 14 ist für **GNOME Shell 48, 49, 50 und 51** freigegeben.
+Die Erweiterung wurde unter GNOME 50 verwendet. Vorprüfungen mit den originalen
+Lupenklassen von GNOME 48, 49 und 51 und simulierten Desktop-Objekten bestanden.
+Vollständige Praxistests auf diesen drei Versionen stehen noch aus; die Freigabe
+stützt sich auf diese Vorprüfungen.
+
+Die Erweiterung verwendet interne GNOME-Lupenmethoden. Zur Laufzeitprüfung auf
+jeder unterstützten Version gehören Mausrad, Monitorwechsel, unterschiedliche
+Skalierung und Sperren/Entsperren.
 Bei einem geänderten GNOME-Compositor-Modifikator kann Mausrad-Zoom über
 Anwendungsfenstern abweichen; GNOMEs Standard ist Super.
 

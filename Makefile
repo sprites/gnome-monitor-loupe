@@ -5,6 +5,7 @@ UUID = monitor-loupe@sprites.github.io
 test:
 	node --experimental-default-type=module test-geometry.mjs
 	node --experimental-default-type=module test-zoom.mjs
+	node --experimental-default-type=module test-resize.mjs
 	node --experimental-default-type=module test-lifecycle.mjs
 	glib-compile-schemas --strict --dry-run schemas
 	msgfmt --check --output-file=/dev/null po/de.po

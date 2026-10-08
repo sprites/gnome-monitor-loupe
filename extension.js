@@ -7,7 +7,7 @@ import St from 'gi://St';
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
-import {lensGeometry, insideLens, shapeSize} from './geometry.js';
+import {lensGeometry, insideLens, shapeSize, nextLensSize} from './geometry.js';
 import {createLensEffect} from './appearance.js';
 import {frameColor} from './color.js';
 import {nextZoom} from './zoom.js';
@@ -30,6 +30,7 @@ export default class MonitorLoupe extends Extension {
         this._magnifierSettings = new Gio.Settings({schema_id: 'org.gnome.desktop.a11y.magnifier'});
         this._boundShortcuts = [];
         this._scrollRemainder = 0;
+        this._scrollAction = null;
         this._lastScrollTime = 0;
         this._addIndicator();
         this._indicatorVisibilityId = this._a11y.connect(
@@ -137,7 +138,8 @@ export default class MonitorLoupe extends Extension {
             if (['lens-width', 'lens-height', 'lens-shape', 'lens-radius',
                 'frame-color', 'rectangle-border-width'].includes(key))
                 region._changeROI();
-            this._scrollRemainder = 0;
+            if (!this._resizing)
+                this._scrollRemainder = 0;
         });
         this._monitorsChangedId = Main.layoutManager.connect('monitors-changed', () =>
             region._changeROI());
@@ -238,20 +240,28 @@ export default class MonitorLoupe extends Extension {
             (state & Clutter.ModifierType.MOD1_MASK ? 2 : 0) |
             (state & Clutter.ModifierType.SHIFT_MASK ? 4 : 0) |
             (state & (Clutter.ModifierType.SUPER_MASK | Clutter.ModifierType.MOD4_MASK) ? 8 : 0);
-        if (!this._settings.get_boolean('scroll-zoom') ||
-            !(Main.actionMode & (Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW)) ||
-            modifiers !== this._settings.get_int('scroll-zoom-modifiers')) {
+        const resize = this._settings.get_boolean('scroll-resize') &&
+            modifiers === this._settings.get_int('scroll-resize-modifiers');
+        const zoom = this._settings.get_boolean('scroll-zoom') &&
+            modifiers === this._settings.get_int('scroll-zoom-modifiers');
+        const action = resize ? 'resize' : zoom ? 'zoom' : null;
+        if (!(Main.actionMode & (Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW)) || !action) {
             this._scrollRemainder = 0;
+            this._scrollAction = null;
             return Clutter.EVENT_PROPAGATE;
         }
+        if (action !== this._scrollAction)
+            this._scrollRemainder = 0;
+        this._scrollAction = action;
+        const apply = direction => resize ? this._resize(direction) : this._zoom(direction);
         switch (event.get_scroll_direction()) {
         case Clutter.ScrollDirection.UP:
             this._scrollRemainder = 0;
-            this._zoom(1);
+            apply(1);
             break;
         case Clutter.ScrollDirection.DOWN:
             this._scrollRemainder = 0;
-            this._zoom(-1);
+            apply(-1);
             break;
         case Clutter.ScrollDirection.SMOOTH: {
             const [dx, dy] = event.get_scroll_delta();
@@ -265,16 +275,41 @@ export default class MonitorLoupe extends Extension {
                 this._scrollRemainder = 0;
             this._lastScrollTime = time;
             this._scrollRemainder += dy;
-            const steps = Math.trunc(this._scrollRemainder);
+            const steps = Math.trunc(this._scrollRemainder + Math.sign(this._scrollRemainder) * 1e-9);
             this._scrollRemainder -= steps;
+            if (Math.abs(this._scrollRemainder) < 1e-9)
+                this._scrollRemainder = 0;
             if (steps !== 0)
-                this._zoom(-steps);
+                apply(-steps);
             break;
         }
         default:
             return Clutter.EVENT_PROPAGATE;
         }
         return Clutter.EVENT_STOP;
+    }
+
+    _resize(direction) {
+        const [x, y] = global.get_pointer();
+        const monitor = Main.layoutManager.monitors.find(m =>
+            x >= m.x && x < m.x + m.width && y >= m.y && y < m.y + m.height);
+        if (!monitor)
+            return;
+        const size = nextLensSize(this._settings.get_int('lens-width'),
+            this._settings.get_int('lens-height'), this._settings.get_int('lens-radius'),
+            this._settings.get_string('lens-shape'), direction, monitor);
+        if (Object.keys(size).some(dimension => !this._settings.is_writable(`lens-${dimension}`)))
+            return;
+        this._resizing = true;
+        try {
+            for (const [dimension, value] of Object.entries(size)) {
+                const key = `lens-${dimension}`;
+                if (value !== this._settings.get_int(key))
+                    this._settings.set_int(key, value);
+            }
+        } finally {
+            this._resizing = false;
+        }
     }
 
     _zoom(direction) {
@@ -324,6 +359,7 @@ export default class MonitorLoupe extends Extension {
         this._a11y = null;
         this._magnifierSettings = null;
         this._scrollRemainder = 0;
+        this._scrollAction = null;
         this._lastScrollTime = 0;
         if (restoreRegion && region) {
             region._updateScreenPosition();

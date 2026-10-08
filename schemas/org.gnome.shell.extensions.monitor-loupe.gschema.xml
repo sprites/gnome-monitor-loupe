@@ -44,6 +44,15 @@
       <range min="1" max="15"/>
       <summary>Scroll zoom modifiers: Ctrl=1, Alt=2, Shift=4, Super=8</summary>
     </key>
+    <key name="scroll-resize" type="b">
+      <default>true</default>
+      <summary>Resize the lens with modifier keys and the scroll wheel</summary>
+    </key>
+    <key name="scroll-resize-modifiers" type="i">
+      <default>13</default>
+      <range min="1" max="15"/>
+      <summary>Lens resize modifiers: Ctrl=1, Alt=2, Shift=4, Super=8</summary>
+    </key>
     <key name="zoom-step" type="d">
       <default>0.25</default>
       <range min="0.05" max="5.0"/>

@@ -61,6 +61,12 @@ msgstr "Mausrad-Zoom"
 msgid "Scroll wheel modifiers"
 msgstr "Tastenkombination für Mausrad-Zoom"
 
+msgid "Scroll wheel lens size"
+msgstr "Tastenkombination für Lupengröße"
+
+msgid "Scroll up to enlarge the lens, down to shrink it. Changes by about 10% per step, limited to the current monitor."
+msgstr "Nach oben die Linse vergrößern, nach unten verkleinern. Änderung um etwa 10 % pro Schritt, begrenzt auf den aktuellen Monitor."
+
 msgid "Hold these keys while scrolling. Include Super to zoom over application windows."
 msgstr "Diese Tasten beim Scrollen gedrückt halten. Mit Super funktioniert der Zoom auch über Anwendungsfenstern."
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {lensGeometry, insideLens, shapeSize} from './geometry.js';
+import {lensGeometry, insideLens, shapeSize, nextLensSize} from './geometry.js';
 import {nextZoom} from './zoom.js';
 import {frameColor} from './color.js';
 
@@ -32,6 +32,8 @@ class Settings extends Signals {
     get_string(key) { return this.values[key]; }
     get_double(key) { return this.values[key]; }
     get_boolean(key) { return this.values[key]; }
+    is_writable() { return true; }
+    set_int(key, value) { this.values[key] = value; this.emit('changed', key); }
     set_boolean(key, value) { this.values[key] = value; }
     set_double(key, value) { this.values[key] = value; }
 }
@@ -51,6 +53,7 @@ const settings = new Settings({
     'lens-width': 640, 'lens-height': 360, 'zoom-step': 0.25, 'scroll-zoom': true,
     'lens-shape': 'rectangle', 'lens-radius': 300, 'scroll-zoom-modifiers': 9,
     'frame-color': '#242b33', 'rectangle-border-width': 2,
+    'scroll-resize': false, 'scroll-resize-modifiers': 13,
 });
 const a11y = new Settings({'screen-magnifier-enabled': false});
 const magnifierSettings = new Settings({'mag-factor': 2});
@@ -102,7 +105,7 @@ const Clutter = {
 };
 const ExtensionClass = vm.runInNewContext(`${source}\nMonitorLoupe;`, {
     Extension: class { getSettings() { return settings; } },
-    InjectionManager, lensGeometry, insideLens, shapeSize, nextZoom, Main, Clutter,
+    InjectionManager, lensGeometry, insideLens, shapeSize, nextLensSize, nextZoom, Main, Clutter,
     frameColor, createLensEffect: (shape, color, borderWidth, radius) => ({shape, color, borderWidth, radius}),
     Gio: {Settings: class {
         constructor({schema_id}) {
@@ -252,6 +255,57 @@ Main.actionMode = 4;
 assert.equal(scroll(0), false, 'Do not intercept lock-screen or modal input');
 Main.actionMode = 1;
 
+// Size gestures change dimensions, never the magnification or enabled state.
+settings.values['scroll-resize'] = true;
+settings.values['lens-shape'] = 'rectangle';
+settings.values['lens-width'] = 640;
+settings.values['lens-height'] = 360;
+layout.monitors = [{x: 0, y: 0, width: 1920, height: 1080}];
+const zoomBeforeResize = magnifierSettings.values['mag-factor'];
+const enabledBeforeResize = a11y.values['screen-magnifier-enabled'];
+assert.equal(scroll(0, 25), true); // Ctrl + Shift + Super
+assert.equal(settings.values['lens-width'], 704);
+assert.equal(settings.values['lens-height'], 396);
+assert.equal(region.viewport.width, 704, 'Resize must update the visible lens');
+assert.equal(magnifierSettings.values['mag-factor'], zoomBeforeResize);
+assert.equal(a11y.values['screen-magnifier-enabled'], enabledBeforeResize);
+scroll(1, 25);
+assert.equal(settings.values['lens-width'], 640);
+assert.equal(settings.values['lens-height'], 360);
+for (let i = 0; i < 50; i++) scroll(0, 25);
+assert(settings.values['lens-width'] <= 1920);
+assert(settings.values['lens-height'] <= 1080);
+for (let i = 0; i < 100; i++) scroll(1, 25);
+assert(settings.values['lens-width'] >= 160);
+assert(settings.values['lens-height'] >= 90);
+settings.values['lens-shape'] = 'loupe';
+settings.values['lens-radius'] = 300;
+scroll(0, 25);
+assert.equal(settings.values['lens-radius'], 330);
+scroll(1, 25);
+assert.equal(settings.values['lens-radius'], 300);
+// Smooth-wheel fractions must survive our own dimension writes.
+scroll(2, 25, -1.4);
+assert.equal(settings.values['lens-radius'], 330);
+scroll(2, 25, -0.6);
+assert.equal(settings.values['lens-radius'], 363);
+// A partial zoom gesture must not leak into a size gesture.
+scroll(2, 9, -0.4);
+scroll(2, 25, -0.6);
+assert.equal(settings.values['lens-radius'], 363);
+settings.values['scroll-resize-modifiers'] = 10; // Alt + Super
+settings.emit('changed', 'scroll-resize-modifiers');
+assert.equal(scroll(0, 25), false);
+assert.equal(scroll(0, 5), true);
+assert.equal(settings.values['lens-radius'], 399);
+assert.equal(scroll(2, 5, 0, 1), false, 'Horizontal resizing gestures pass through');
+settings.values['scroll-resize'] = false;
+assert.equal(scroll(0, 5), false);
+settings.values['scroll-resize'] = true;
+Main.actionMode = 4;
+assert.equal(scroll(0, 5), false, 'Size gestures must not intercept the lock screen');
+Main.actionMode = 1;
+
 failROI = true;
 assert.throws(() => region._changeROI(), /ROI failure/);
 assert.equal(region._lensMode, true);
@@ -275,6 +329,7 @@ extension.disable();
 assert.equal(restoreCount, 1, 'Repeated disable must be harmless');
 extension.enable();
 extension.disable();
+
 
 failROI = true;
 assert.throws(() => extension.enable(), /ROI failure/);
