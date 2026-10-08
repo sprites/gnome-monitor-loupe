@@ -25,9 +25,11 @@ Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenreg
 ## Die Lupenansichten in Bewegung
 
 Die Animation zeigt, wie der vergrösserte Ausschnitt über einen Desktop wandert
-und dabei alle vier verfügbaren Formen durchläuft.
+und dabei alle vier verfügbaren Formen durchläuft. Mit **Umschalt + Strg + Super +
+Mausrad** lässt sich das Lupenfenster vergrössern und verkleinern: beim Rechteck
+proportional, bei runden Formen über den Radius. Die Vergrößerungsstufe bleibt gleich.
 
-![Animation mit Rechteck, Lupe, Feldstecher und Fernrohr](docs/monitor-loupe-demo.gif)
+![Animation aller vier Lupenformen mit größer und kleiner werdendem Lupenfenster](docs/monitor-loupe-demo-v14.gif)
 
 *Die Desktop-Szene ist eine Illustration und keine Live-Aufnahme von GNOME.*
 [Statisches PNG-Vorschaubild](docs/monitor-loupe-demo.png)

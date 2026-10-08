@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a small looping promo animation illustrating Monitor Loupe's views."""
+"""Illustrate Monitor Loupe's shapes and scroll-wheel lens resizing."""
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import math
@@ -87,33 +87,34 @@ def make_desktop():
     return im
 
 
-def magnified_patch(base, cx, cy, radius, shape):
-    # Sample a larger patch, scale it to the view aperture, then mask it.
+def magnified_patch(base, cx, cy, radius, shape, scale=1):
+    # Keep content magnification constant while the aperture changes size.
     if shape == "rectangle":
-        box = (cx - 145, cy - 98, cx + 145, cy + 98)
-        mask = Image.new("L", (290, 196), 0)
-        ImageDraw.Draw(mask).rounded_rectangle((0, 0, 289, 195), radius=16, fill=255)
-        crop_box = (cx - 105, cy - 72, cx + 105, cy + 72)
+        width, height = round(290 * scale), round(196 * scale)
     elif shape == "binoculars":
-        box = (cx - 112, cy - 65, cx + 112, cy + 65)
-        mask = Image.new("L", (224, 130), 0)
-        md = ImageDraw.Draw(mask)
-        md.ellipse((0, 0, 128, 128), fill=255)
-        md.ellipse((96, 0, 224, 128), fill=255)
-        crop_box = (cx - 83, cy - 48, cx + 83, cy + 48)
+        width, height = round(224 * scale), round(130 * scale)
     else:
-        r = radius
-        box = (cx - r, cy - r, cx + r, cy + r)
-        mask = Image.new("L", (r * 2, r * 2), 0)
-        ImageDraw.Draw(mask).ellipse((0, 0, r * 2 - 1, r * 2 - 1), fill=255)
-        crop_box = (cx - int(r * .72), cy - int(r * .72), cx + int(r * .72), cy + int(r * .72))
+        width = height = round(radius * 2 * scale)
+    left, top = cx - width // 2, cy - height // 2
+    box = (left, top, left + width, top + height)
+    mask = Image.new("L", (width, height), 0)
+    if shape == "rectangle":
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, width - 1, height - 1), radius=16, fill=255)
+    elif shape == "binoculars":
+        md = ImageDraw.Draw(mask)
+        md.ellipse((0, 0, round(128 * scale), height - 1), fill=255)
+        md.ellipse((round(96 * scale), 0, width - 1, height - 1), fill=255)
+    else:
+        ImageDraw.Draw(mask).ellipse((0, 0, width - 1, height - 1), fill=255)
+    crop_box = (cx - width / 2 / 1.4, cy - height / 2 / 1.4,
+                cx + width / 2 / 1.4, cy + height / 2 / 1.4)
     patch = base.crop(crop_box).resize(mask.size, Image.Resampling.LANCZOS)
     return box, patch, mask
 
 
-def draw_lens(base, shape, cx, cy):
-    radius = 78
-    box, patch, mask = magnified_patch(base, cx, cy, radius, shape)
+def draw_lens(base, shape, cx, cy, scale=1):
+    radius = round(78 * scale)
+    box, patch, mask = magnified_patch(base, cx, cy, 78, shape, scale)
     layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
     patch = patch.convert("RGBA")
     # Mild cool tint makes the optical view feel like one coherent glass lens.
@@ -125,19 +126,22 @@ def draw_lens(base, shape, cx, cy):
         d.rounded_rectangle(box, radius=16, outline=(44, 220, 247, 255), width=5)
         d.rounded_rectangle((box[0] + 7, box[1] + 7, box[2] - 7, box[3] - 7), radius=12, outline=(225, 249, 255, 185), width=2)
     elif shape == "binoculars":
-        for lx in (cx - 48, cx + 48):
-            d.ellipse((lx - 64, cy - 64, lx + 64, cy + 64), outline=(31, 222, 242, 255), width=8)
-            d.ellipse((lx - 57, cy - 57, lx + 57, cy + 57), outline=(219, 249, 255, 210), width=2)
-        d.rounded_rectangle((cx - 20, cy - 11, cx + 20, cy + 11), radius=8, fill=(26, 44, 82, 245), outline=(68, 225, 249, 255), width=3)
+        r = round(64 * scale)
+        for lx in (cx - round(48 * scale), cx + round(48 * scale)):
+            d.ellipse((lx - r, cy - r, lx + r, cy + r), outline=(31, 222, 242, 255), width=8)
+            d.ellipse((lx - r + 7, cy - r + 7, lx + r - 7, cy + r - 7), outline=(219, 249, 255, 210), width=2)
+        d.rounded_rectangle((cx - 20 * scale, cy - 11 * scale, cx + 20 * scale, cy + 11 * scale), radius=8, fill=(26, 44, 82, 245), outline=(68, 225, 249, 255), width=3)
     else:
         ring = (128, 90, 245, 255) if shape == "telescope" else (38, 214, 242, 255)
         width = 13 if shape == "telescope" else 8
         d.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=ring, width=width)
         d.ellipse((cx - radius + 8, cy - radius + 8, cx + radius - 8, cy + radius - 8), outline=(230, 250, 255, 230), width=2)
-        # Short handle, like the existing settings symbol.
-        d.line((cx + 54, cy + 54, cx + 93, cy + 93), fill=(27, 45, 76, 255), width=22)
-        d.line((cx + 54, cy + 54, cx + 93, cy + 93), fill=ring, width=14)
-        d.line((cx + 59, cy + 57, cx + 89, cy + 88), fill=(210, 248, 255, 210), width=3)
+        if shape == "loupe":
+            # The handle scales with the lens; the telescope has no handle.
+            handle = (cx + 54 * scale, cy + 54 * scale, cx + 93 * scale, cy + 93 * scale)
+            d.line(handle, fill=(27, 45, 76, 255), width=round(22 * scale))
+            d.line(handle, fill=ring, width=round(14 * scale))
+            d.line((cx + 59 * scale, cy + 57 * scale, cx + 89 * scale, cy + 88 * scale), fill=(210, 248, 255, 210), width=3)
     # Tiny pointer dot inside the magnified view.
     d.ellipse((cx - 3, cy - 3, cx + 3, cy + 3), fill=(255, 255, 255, 245))
     return Image.alpha_composite(base.convert("RGBA"), layer).convert("RGB")
@@ -147,25 +151,42 @@ def render():
     desktop = make_desktop()
     frames = []
     modes = [("rectangle", "RECHTECK"), ("loupe", "LUPE"), ("binoculars", "FELDSTECHER"), ("telescope", "FERNROHR")]
-    positions = [(222, 242), (376, 335), (565, 210), (756, 340)]
+    small, large = .65, 1.4
+    preview_frames = []
     for mode_index, (shape, label) in enumerate(modes):
         route = []
-        for index, start in enumerate(positions):
-            end = positions[(index + 1) % len(positions)]
-            for tick in range(6):
-                t = tick / 6
+        # Pause the pointer during resizing to make the changing aperture clear.
+        for tick in range(8):
+            t = tick / 7
+            eased = t * t * (3 - 2 * t)
+            route.append((round(222 + 258 * eased), round(242 + 18 * eased), small, "FOLGT DEM MAUSZEIGER"))
+        for start, end, caption in [(small, large, "LINSE VERGRÖSSERN"), (large, small, "LINSE VERKLEINERN")]:
+            for tick in range(16):
+                t = tick / 15
                 eased = t * t * (3 - 2 * t)
-                route.append((round(start[0] + (end[0] - start[0]) * eased),
-                              round(start[1] + (end[1] - start[1]) * eased)))
-        for x, y in route:
-            frame = draw_lens(desktop, shape, x, y)
+                route.append((480, 260, start + (end - start) * eased, caption))
+            route.extend([(480, 260, end, caption)] * 4)
+        for tick in range(8):
+            t = tick / 7
+            eased = t * t * (3 - 2 * t)
+            route.append((round(480 + 276 * eased), round(260 + 80 * eased), small, "FOLGT DEM MAUSZEIGER"))
+        for frame_index, (x, y, scale, caption) in enumerate(route):
+            frame = draw_lens(desktop, shape, x, y, scale)
             d = ImageDraw.Draw(frame, "RGBA")
+            # Separate window size from content zoom in the caption.
+            rounded(d, (235, 44, 725, 79), 12, (8, 14, 29, 225), (93, 200, 237, 110), 1)
+            shortcut = "Umschalt + Strg + Super + Mausrad"
+            d.text((W / 2, 61), shortcut, anchor="mm", font=font(17, True), fill=(234, 248, 255, 255))
+            rounded(d, (267, 430, 693, 466), 12, (8, 14, 29, 225))
+            d.text((W / 2, 448), caption, anchor="mm", font=font(16, True), fill=(234, 248, 255, 255))
             # Mode caption and progress markers.
             rounded(d, (24, 455, 207, 505), 16, (8, 14, 29, 205), (93, 200, 237, 110), 1)
             d.text((42, 470), label, font=font(17, True), fill=(234, 248, 255, 255))
             for i in range(4):
                 d.ellipse((797 + i * 31, 488, 811 + i * 31, 502), fill=(42, 220, 243, 250) if i == mode_index else (180, 201, 231, 90))
             frames.append(frame)
+            if mode_index < 2 and frame_index in (8, 23, 43):
+                preview_frames.append(frame.copy())
     OUT.mkdir(exist_ok=True)
     # Save a crisp PNG poster using a scene that highlights the loupe.
     poster = draw_lens(desktop, "loupe", 310, 220)
@@ -173,9 +194,19 @@ def render():
     rounded(pd, (24, 455, 207, 505), 16, (8, 14, 29, 205), (93, 200, 237, 110), 1)
     pd.text((42, 470), "LUPE", font=font(17, True), fill=(234, 248, 255, 255))
     poster.save(OUT / "monitor-loupe-demo.png", optimize=True)
-    # Palette conversion keeps the animated preview compact for web upload.
-    palette_frames = [f.quantize(colors=128, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.FLOYDSTEINBERG) for f in frames]
-    palette_frames[0].save(OUT / "monitor-loupe-demo.gif", save_all=True, append_images=palette_frames[1:], duration=90, loop=0, optimize=True, disposal=2)
+    # Contact sheet for visual review; keep it outside the published docs.
+    review = Image.new("RGB", (W * 3, H * 2))
+    for index, frame in enumerate(preview_frames):
+        review.paste(frame, ((index % 3) * W, (index // 3) * H))
+    review.save("/tmp/monitor-loupe-animation-review.png")
+    # One palette avoids color flicker and lets GIF encode only changed areas.
+    samples = Image.new("RGB", (240 * 4, 135 * 3))
+    for index in range(12):
+        frame = frames[index * (len(frames) - 1) // 11]
+        samples.paste(frame.resize((240, 135)), ((index % 4) * 240, (index // 4) * 135))
+    palette = samples.quantize(colors=128, method=Image.Quantize.MEDIANCUT)
+    palette_frames = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
+    palette_frames[0].save(OUT / "monitor-loupe-demo-v14.gif", save_all=True, append_images=palette_frames[1:], duration=90, loop=0, optimize=True, disposal=1)
 
 
 if __name__ == "__main__":
