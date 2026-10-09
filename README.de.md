@@ -160,11 +160,12 @@ Der abgestimmte Ablauf für GNOME- und GitHub-Releases steht in der
 das GNOME-Upload-Paket mit der nächsten Nummer, ohne die Versionsnummer auf
 GitHub oder lokal vorwegzunehmen.
 
-Version 14 ist für **GNOME Shell 48, 49, 50 und 51** freigegeben.
-Die Erweiterung wurde unter GNOME 50 verwendet. Vorprüfungen mit den originalen
-Lupenklassen von GNOME 48, 49 und 51 und simulierten Desktop-Objekten bestanden.
-Vollständige Praxistests auf diesen drei Versionen stehen noch aus; die Freigabe
-stützt sich auf diese Vorprüfungen.
+Version 15 ist für **GNOME Shell 48, 49, 50 und 51** freigegeben.
+Isolierte Wayland-VM-Tests auf GNOME 48.0, 49.1, 50.0 und 51.0 prüfen Laden,
+Formwechsel und wiederholtes Deaktivieren/Aktivieren. Die Shader-Anpassung für
+GNOME 51 wurde unter GNOME 50.0 und 51.0 geprüft, einschließlich einer Bildprüfung
+der runden Formen unter GNOME 51. Vollständige Tests mit physischen Monitoren
+und Eingabegeräten stehen noch aus.
 
 Die Erweiterung verwendet interne GNOME-Lupenmethoden. Zur Laufzeitprüfung auf
 jeder unterstützten Version gehören Mausrad, Monitorwechsel, unterschiedliche

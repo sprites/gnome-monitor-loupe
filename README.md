@@ -175,11 +175,11 @@ pointer alignment, configurable dimensions, fractional zoom steps, input handlin
 and extension cleanup. Lifecycle tests use a simulated Shell boundary and do not
 replace testing on a real GNOME desktop.
 
-Version 14 declares support for **GNOME Shell 48, 49, 50 and 51**.
-The extension has been used on GNOME 50. Compatibility checks against the original
-magnifier classes of GNOME 48, 49 and 51 passed with simulated desktop objects.
-Full desktop tests on those versions have not been performed; support is enabled
-on the basis of these preliminary checks.
+Version 15 declares support for **GNOME Shell 48, 49, 50 and 51**.
+Isolated Wayland VM tests on GNOME 48.0, 49.1, 50.0 and 51.0 cover loading,
+shape changes and repeated enable/disable. The GNOME 51 shader adaptation was
+verified on GNOME 50.0 and 51.0, including visual inspection of the round shapes
+on GNOME 51. Full testing with physical monitors and input devices remains pending.
 
 This extension uses internal GNOME magnifier methods. Scroll interception relies on GNOME’s
 compositor modifier (Super by default). Nonstandard compositor modifier settings

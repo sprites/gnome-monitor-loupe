@@ -14,11 +14,10 @@ export function createLensEffect(shape, color, borderWidth = 2, radius = 300) {
     const borderRadius = Math.min(borderWidth, radius) / Math.max(radius, 1);
     const glassRadius = Math.max(0, outerRadius - borderRadius);
     const antialias = (0.5 / Math.max(radius, 1)).toFixed(6);
-    const effect = new Clutter.ShaderEffect({shader_type: Cogl.ShaderType.FRAGMENT});
-    effect.set_shader_source(`
-        uniform sampler2D tex;
-        void main() {
-            vec2 uv = cogl_tex_coord_in[0].xy;
+    // GNOME 51 uses pipeline snippets instead of standalone shader programs.
+    const useSnippet = typeof Clutter.ShaderEffect.new_with_snippet === 'function';
+    const fragment = `
+            vec2 uv = ${useSnippet ? 'cogl_tex_coord0_in' : 'cogl_tex_coord_in[0]'}.xy;
             vec2 p = uv * vec2(${width.toFixed(1)}, ${height.toFixed(1)});
             float d = length(p - vec2(1.0));
             ${shape === 'binoculars' ? 'd = min(d, length(p - vec2(2.4, 1.0)));' : ''}
@@ -32,10 +31,16 @@ export function createLensEffect(shape, color, borderWidth = 2, radius = 300) {
                 float t = clamp(dot(p - a, ab) / dot(ab, ab), 0.0, 1.0);
                 float handle = 1.0 - smoothstep(0.13, 0.14, length(p - a - t * ab));
                 outer = max(outer, handle);` : ''}
-            vec4 scene = texture2D(tex, uv);
+            vec4 scene = ${useSnippet ? 'texture(cogl_sampler0, uv)' : 'texture2D(tex, uv)'};
             cogl_color_out = mix(vec4(rim * outer, outer), scene, glass) * cogl_color_in;
-        }
-    `);
+    `;
+    if (useSnippet) {
+        const snippet = Cogl.Snippet.new(Cogl.SnippetHook.FRAGMENT, null, null);
+        snippet.set_replace(fragment);
+        return Clutter.ShaderEffect.new_with_snippet(snippet);
+    }
+    const effect = new Clutter.ShaderEffect({shader_type: Cogl.ShaderType.FRAGMENT});
+    effect.set_shader_source(`uniform sampler2D tex;\nvoid main() {\n${fragment}\n}`);
     effect.set_uniform_value('tex', 0);
     return effect;
 }
