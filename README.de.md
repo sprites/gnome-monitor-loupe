@@ -7,6 +7,60 @@ den Nachbarmonitor reichen.
 
 [English documentation](README.md)
 
+[PrintScreen-Aufnahmen](#bildschirmaufnahmen-mit-printscreen) · [Einstellungen im Bild](#einstellungen-im-bild) · [Installation](#installation)
+
+## Bildschirmaufnahmen mit PrintScreen
+
+Mit **Druck / PrintScreen** kannst du den vergrößerten Lupenbereich direkt als
+PNG aufnehmen – ohne Mauszeiger und ohne Fadenkreuz. Das Bild wird gespeichert
+und in die Zwischenablage kopiert. Mit **Strg + V** kannst du es beispielsweise
+in einen Bildeditor einfügen.
+
+### So startest du
+
+1. Öffne die Einstellungen von Monitor Loupe. Scrolle unter „Vergrößerung“ zum Bereich **„Bildschirmaufnahmen“**.
+2. Schalte **„Lupenfenster mit Druck aufnehmen“** ein. Bei der Installation ist diese Funktion ausgeschaltet.
+3. Schalte die Lupe ein, zum Beispiel mit **Strg + Super + Mausrad nach oben**, und drücke **Druck / PrintScreen**.
+
+Die Aufnahme erfolgt sofort. Du musst keinen Bereich im GNOME-Aufnahmefenster
+auswählen. Falls du GNOMEs Bildschirmfoto-Kürzel geändert hast, verwendest du
+statt PrintScreen dieses Kürzel.
+
+![Bildschirmaufnahmen in Version 16: direkte Aufnahme, Rahmen und Griff sowie transparenter Hintergrund](docs/preferences-screenshots-v16-de.png)
+
+*Im Bild sind alle drei Schalter eingeschaltet. Die folgenden Standardwerte
+gelten nach einer neuen Installation oder dem Zurücksetzen.*
+
+| Einstellung | Einfach erklärt | Standard |
+| --- | --- | --- |
+| **Lupenfenster mit Druck aufnehmen** | Ein: PrintScreen nimmt die aktive Lupe direkt auf. Aus: GNOMEs normale Aufnahme-Auswahl öffnet sich. | Aus |
+| **Rahmen und Griff mit aufnehmen** | Ein: Das Lupeninstrument bleibt im Bild. Aus: Nur der vergrößerte Linseninhalt wird aufgenommen. | Ein |
+| **Transparenter Hintergrund** | Ein: Die Fläche außerhalb der Linse oder des Instruments wird transparent. Aus: Der sichtbare Desktop-Hintergrund bleibt im rechteckigen PNG erhalten. | Ein |
+
+### Welche Kombination brauche ich?
+
+| Dein Ziel | Rahmen und Griff | Transparenter Hintergrund |
+| --- | --- | --- |
+| Nur den vergrößerten Inhalt freistellen | Aus | Ein |
+| Die ganze Lupe samt Rahmen und Griff freistellen | Ein | Ein |
+| Die Lupe mit der sichtbaren Desktop-Umgebung aufnehmen | Ein | Aus |
+
+Ohne Rahmen entsteht beim Rechteck ein Bild ohne Rand, bei Lupe und Fernrohr
+eine kreisförmige Linse und beim Feldstecher zwei überlappende Linsen. Transparenz
+gilt auch für das Bild in der Zwischenablage. Ein Bildbetrachter kann transparente
+Flächen weiß, schwarz oder kariert anzeigen; diese Fläche ist nicht im PNG gespeichert.
+Beim Rechteck füllt der Bildinhalt die ganze Form, daher gibt es keine freien Ecken.
+
+Beim Auslösen schließt und öffnet sich kurz eine **Kamerablende**. Dieser Effekt
+erscheint nicht im gespeicherten Bild und hat keinen eigenen Einstellungsschalter.
+
+**Die GNOME-Auswahl erscheint weiterhin?** Die Lupe und „Lupenfenster mit Druck
+aufnehmen“ müssen beide eingeschaltet sein. Nach einem Update einmal vollständig
+abmelden und wieder anmelden; den Bildschirm zu sperren reicht nicht.
+
+An Bildschirmrändern wird nur der sichtbare Teil aufgenommen. GNOME übernimmt
+den Speicherort und die Benachrichtigung für das Bildschirmfoto.
+
 ## Wähle deine Lupenansicht
 
 | Rechteck | Lupe | Feldstecher | Fernrohr |
@@ -34,24 +88,33 @@ proportional, bei runden Formen über den Radius. Die Vergrößerungsstufe bleib
 *Die Desktop-Szene ist eine Illustration und keine Live-Aufnahme von GNOME.*
 [Statisches PNG-Vorschaubild](docs/monitor-loupe-demo.png)
 
-## Neue Einstellungen im Bild
+## Einstellungen im Bild
 
-Aufnahmen der Einstellungsbereiche „Lupenansicht“ und „Vergrößerung“.
+Die Bilder zeigen die Einstellungsbereiche von Version 16 unter GNOME 51,
+jeweils einen Bereich. Alle Bereiche gehören zur selben Einstellungsseite;
+scrolle im Fenster nach unten, um die weiteren Einstellungen zu sehen.
+Farben und Fensterstil können je nach Desktop abweichen.
 
 **Rechteck — Abmessungen, Rahmendicke und Farbe**
 
-![Rechteck-Einstellungen mit Breite, Höhe, Rahmendicke und Farbauswahl](docs/preferences-de.png)
+![Rechteck-Einstellungen in Version 16 mit Breite, Höhe, Rahmendicke und Farbauswahl](docs/preferences-appearance-v16-de.png)
+
+Wähle oben eine Form. Beim Rechteck stellst du **Breite** und **Höhe** ein.
+**Rahmendicke** bestimmt die Stärke des sichtbaren Randes; das Farbfeld daneben
+ändert die Farbe von Rahmen, Griff und Symbolen.
 
 **Runde Formen — Radius und Farbe**
 
-![Einstellungen der Lupe, Radius und Farbauswahl](docs/preferences-round-de.png)
+![Einstellungen einer runden Lupe in Version 16 mit Radius, Rahmendicke und Farbe](docs/preferences-round-v16-de.png)
 
 Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
 du den Rahmen aller Formen aus. Änderungen an der Ansicht werden sofort übernommen.
+Bei runden Formen ersetzt der **Radius** die Regler für Breite und Höhe.
+Ein größerer Radius bedeutet eine größere Linse; die Vergrößerungsstufe bleibt gleich.
 
 **Mausrad-Steuerung — Zoom und Lupengröße**
 
-![Einstellungen für Mausrad-Zoom und Lupengröße mit eigenen Tastenkürzeln und Ein-/Aus-Schaltern](docs/preferences-controls-v14-de.png)
+![Mausrad-Einstellungen in Version 16 mit getrennten Schaltern für Zoom und Lupengröße](docs/preferences-controls-v16-de.png)
 
 | Funktion | Standardkombination mit Mausrad | Wirkung |
 | --- | --- | --- |
@@ -63,6 +126,15 @@ anklicken, die gewünschten Zusatztasten gemeinsam drücken und loslassen.
 Der jeweilige Schalter rechts daneben aktiviert oder deaktiviert die Funktion.
 Die gewählten Kürzel bleiben beim Ausschalten erhalten. Bereits für die andere
 Mausrad-Funktion verwendete Kombinationen werden beim Eingeben abgelehnt.
+
+**Tastenkombinationen — Lupe einschalten und Zoom steuern**
+
+![Tastenkombinationen in Version 16 für das Ein- und Ausschalten der Lupe sowie eigene Zoomkürzel](docs/preferences-shortcuts-v16-de.png)
+
+**Lupe ein-/ausschalten** zeigt dein GNOME-Systemkürzel. Klicke auf einen
+Kürzel-Button und drücke eine neue Kombination. **Vergrößern** und **Verkleinern**
+sind eigene, anfangs unbelegte Kürzel für den eingestellten Zoomschritt.
+Rücktaste entfernt ein Kürzel, Escape bricht die Eingabe ab.
 
 ## Einstellungen
 
@@ -84,26 +156,8 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   auch über Anwendungsfenstern.
 - **Zoomschritt:** standardmäßig 0,25×, einstellbar von 0,05× bis 5×.
   Beispiel: 2× → 2,25×. Die maximale Vergrößerung ist 32×.
-- **Bildschirmaufnahmen → Lupenfenster mit Druck aufnehmen:** optional und
-  standardmäßig ausgeschaltet. Bei aktiver Lupe speichert **Druck / PrintScreen**
-  nur den sichtbaren, vergrößerten Lupenausschnitt einschließlich Rahmen,
-  ohne Mauszeiger und Fadenkreuz, als PNG und kopiert ihn in die Zwischenablage.
-  Verwendet das GNOME-Kürzel für die Bildschirmfoto-Auswahl; ein dort geändertes
-  Kürzel gilt auch hier. Ohne aktive Lupe öffnet sich die normale GNOME-Auswahl.
-  An Bildschirmrändern wird nur der sichtbare Teil aufgenommen.
-  **Rahmen und Griff mit aufnehmen** ist standardmäßig eingeschaltet. Wird der
-  Schalter ausgeschaltet, enthält das Rechteck nur den Bildinhalt ohne Rahmen;
-  Lupe und Fernrohr werden als Kreis, der Feldstecher als zwei überlappende Linsen
-  aufgenommen; Rahmen und Griff entfallen. Mit eingeschaltetem Schalter bleibt das Instrument
-  samt Rahmen und Griff erhalten. **Transparenter Hintergrund** steuert unabhängig
-  davon die Umgebung: eingeschaltet wird sie im PNG und in der Zwischenablage
-  außerhalb der Form transparent,
-  ausgeschaltet bleibt der sichtbare Desktop-Hintergrund im rechteckigen PNG
-  erhalten. Transparenz ist standardmäßig eingeschaltet.
-  Der **Kamera-Blendenverschluss** zeigt nach dem Auslösen automatisch für etwa
-  0,36 Sekunden eine sich schließende und wieder öffnende Blende. Der Effekt
-  erscheint nicht in der Aufnahme.
-  GNOME übernimmt Speicherort und Benachrichtigung.
+- **Bildschirmaufnahmen:** Die Anleitung mit Screenshot, Schalter-Erklärung und
+  Beispielen steht oben unter [Bildschirmaufnahmen mit PrintScreen](#bildschirmaufnahmen-mit-printscreen).
 - **Lupengröße per Mausrad:** standardmäßig **Umschalt + Strg + Super + Mausrad**.
   Nach oben vergrößert die Linse, nach unten verkleinert sie. Runde Formen ändern
   den Radius; beim Rechteck werden Breite und Höhe proportional skaliert.

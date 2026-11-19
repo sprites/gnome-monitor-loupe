@@ -6,6 +6,59 @@ At monitor transitions the lens can extend onto a neighboring display.
 
 [Deutsche Anleitung](README.de.md)
 
+[PrintScreen captures](#take-screenshots-with-printscreen) · [Settings in pictures](#settings-in-pictures) · [Installation](#installation)
+
+## Take screenshots with PrintScreen
+
+Press **PrintScreen** to capture the magnified lens area directly as a PNG,
+without the pointer or crosshairs. The image is saved and copied to the clipboard.
+Use **Ctrl + V** to paste it into an image editor, for example.
+
+### Get started
+
+1. Open Monitor Loupe’s preferences. Scroll past “Zoom” to **“Screenshots.”**
+2. Turn on **“Capture zoom window with PrintScreen.”** This feature is off when first installed.
+3. Switch on the magnifier, for example with **Ctrl + Super + scroll wheel up**, then press **PrintScreen**.
+
+The capture happens immediately, without selecting an area in GNOME’s screenshot
+dialog. If you have changed GNOME’s screenshot UI shortcut, use that shortcut
+instead of PrintScreen.
+
+![Version 16 screenshot preferences: direct capture, frame and handle, and transparent background](docs/preferences-screenshots-v16-en.png)
+
+*All three switches are on in this example. The defaults below apply after a
+fresh installation or resetting the extension’s settings.*
+
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **Capture zoom window with PrintScreen** | On: PrintScreen captures the active lens directly. Off: GNOME’s normal screenshot selection opens. | Off |
+| **Include frame and handle** | On: keep the magnifier instrument in the image. Off: capture only the magnified glass contents. | On |
+| **Transparent background** | On: make the area outside the lens or instrument transparent. Off: keep the visible desktop background in the rectangular PNG. | On |
+
+### Which combination should I use?
+
+| Your goal | Frame and handle | Transparent background |
+| --- | --- | --- |
+| Save only the magnified contents with transparent surroundings | Off | On |
+| Save the whole magnifier, including its frame and handle, with transparent surroundings | On | On |
+| Capture the magnifier with the visible desktop surroundings | On | Off |
+
+Without a frame, the rectangle produces a borderless image, the magnifier and
+telescope produce a circular lens, and binoculars produce two overlapping lenses.
+Transparency is preserved in the clipboard image too. An image viewer may display
+transparent areas as white, black, or a checkerboard; that background is not saved
+in the PNG. The rectangle fills its entire shape, so it has no empty corners.
+
+A brief **camera shutter animation** closes and opens when you capture. It is
+not included in the saved image and has no separate preferences switch.
+
+**Still seeing GNOME’s selection dialog?** Both the magnifier and “Capture zoom
+window with PrintScreen” must be on. After an update, fully log out and log back
+in to load the new code; locking the screen is not enough.
+
+At desktop edges, only the visible part is captured. GNOME handles the save
+location and screenshot notification.
+
 ## Choose your lens
 
 | Rectangle | Magnifier | Binoculars | Telescope |
@@ -45,24 +98,32 @@ Monitor Loupe is designed for people who work with large or multiple displays:
   GNOME clips the invisible portion at physical desktop edges. At monitor
   transitions, the lens can extend onto the neighboring display.
 
-## Settings preview
+## Settings in pictures
 
-Captures of the lens appearance and zoom settings.
+These images show Version 16’s preferences under GNOME 51, one section at a time.
+All sections are on the same preferences page; scroll down in the window to see
+the remaining controls. Colors and window styling may vary with your desktop.
 
 **Rectangle — dimensions, frame thickness and color**
 
-![Rectangle preferences with width, height, frame thickness and color](docs/preferences-en.png)
+![Version 16 rectangle preferences with width, height, frame thickness and color](docs/preferences-appearance-v16-en.png)
+
+Choose a shape at the top. For the rectangle, set **Width** and **Height**.
+**Frame thickness** controls the visible border; the color swatch changes the
+color of the frame, handle, and symbols.
 
 **Round shapes — radius and color**
 
-![Magnifier preferences with radius and color](docs/preferences-round-en.png)
+![Version 16 round magnifier preferences with radius, frame thickness and color](docs/preferences-round-v16-en.png)
 
 Click the color swatch to choose a color. Set frame thickness to **0**
 to hide the border on every shape. Appearance changes apply immediately.
+For round shapes, **Radius** replaces the width and height controls.
+A larger radius gives you a larger lens without changing the magnification.
 
 **Scroll-wheel controls — zoom and lens size**
 
-![Scroll-wheel zoom and lens size settings with separate shortcuts and on/off switches](docs/preferences-controls-v14-en.png)
+![Version 16 scroll-wheel settings with separate switches for zoom and lens size](docs/preferences-controls-v16-en.png)
 
 | Function | Default modifiers with the scroll wheel | Effect |
 | --- | --- | --- |
@@ -73,6 +134,15 @@ To edit either combination, click its shortcut button, press the modifier keys
 together, then release them. Each adjacent switch enables or disables its
 function while preserving the chosen shortcut. A combination already assigned
 to the other scroll-wheel function is rejected when entering a new shortcut.
+
+**Keyboard shortcuts — switch the magnifier on and control zoom**
+
+![Version 16 keyboard shortcuts for toggling the magnifier and assigning zoom shortcuts](docs/preferences-shortcuts-v16-en.png)
+
+**Toggle magnifier** shows your GNOME system shortcut. Click a shortcut button
+and press a new combination. **Zoom in** and **Zoom out** are separate, initially
+unset shortcuts that use your chosen zoom step. Backspace clears a shortcut;
+Escape cancels the edit.
 
 ## Controls and preferences
 
@@ -93,24 +163,8 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   modifier. Vertical smooth scrolling is accumulated into steps.
 - **Zoom step** is adjustable from 0.05× to 5×. The default adds or subtracts
   0.25× per step; for example, 2× → 2.25×. Maximum magnification is 32×.
-- **Screenshots → Capture zoom window with PrintScreen:** optional, off by
-  default. With the magnifier active, **PrintScreen** saves only the visible
-  magnified viewport, including its frame, without the pointer or crosshairs,
-  and copies the PNG to the clipboard. Uses GNOME's screenshot UI shortcut,
-  including any customization of that shortcut. With the magnifier inactive,
-  GNOME's normal screenshot UI opens. At desktop edges, only the visible part
-  is captured. **Include frame and handle** is on by default. Turn it off to
-  crop the rectangle to its contents, or save just the circular glass of the
-  magnifier/telescope or the two overlapping binocular lenses; the frame and handle are omitted.
-  With decorations on, the image includes the instrument with its frame and
-  handle. **Transparent background** independently controls the surroundings:
-  on makes the area outside the shape transparent in the PNG and clipboard image;
-  off keeps the visible desktop background
-  in the rectangular PNG. Transparency is enabled by default.
-  The **camera shutter effect** automatically closes
-  and opens an aperture for about 0.36 seconds after capture and never appears
-  in the saved image.
-  GNOME handles the save location and notification.
+- **Screenshots:** see [Take screenshots with PrintScreen](#take-screenshots-with-printscreen)
+  above for a screenshot, an explanation of each switch, and common combinations.
 - **Scroll-wheel lens size:** defaults to **Shift + Ctrl + Super + scroll wheel**.
   Scroll up to enlarge the lens and down to shrink it. Round shapes change their
   radius; rectangles scale width and height together to preserve their aspect ratio.
