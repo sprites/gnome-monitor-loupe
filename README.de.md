@@ -9,6 +9,82 @@ den Nachbarmonitor reichen.
 
 [PrintScreen-Aufnahmen](#bildschirmaufnahmen-mit-printscreen) · [Einstellungen im Bild](#einstellungen-im-bild) · [Installation](#installation)
 
+## Wähle deine Lupenansicht
+
+| Rechteck | Lupe | Feldstecher | Fernrohr |
+| :---: | :---: | :---: | :---: |
+| ![Rechteck-Symbol](docs/icons/rectangle.svg) | ![Lupen-Symbol](docs/icons/loupe.svg) | ![Feldstecher-Symbol](docs/icons/binoculars.svg) | ![Fernrohr-Symbol](docs/icons/telescope.svg) |
+| Klassische rechteckige Ansicht | Runde Linse mit Griff | Zwei überlappende Linsen | Runde Ansicht mit breitem Rahmen |
+| Breite, Höhe und Rahmendicke | Radius einstellbar | Radius pro Linse einstellbar | Radius einstellbar |
+
+*Die Symbole veranschaulichen die vier Formen; sie sind keine Desktop-Screenshots.*
+
+Die **Rahmen- und Symbolfarbe** sowie die **Rahmendicke** sind für alle vier Ansichten einstellbar.
+Die Lupe passt sich mitsamt Rahmen und Griff an die aktuelle Monitorgrösse an.
+Wähle die Form über eines der **vier Symbolfelder ganz oben in den Einstellungen**.
+Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenregler.
+
+## Die Lupenansichten in Bewegung
+
+Die Animation zeigt, wie die Linse schwungvoll hin und her wandert, dabei
+mehrfach größer und kleiner wird und weich zwischen allen vier Formen wechselt. Mit **Umschalt + Strg + Super +
+Mausrad** lässt sich das Lupenfenster vergrössern und verkleinern: beim Rechteck
+proportional, bei runden Formen über den Radius. Die Vergrößerungsstufe bleibt gleich.
+
+![Animation aller vier Lupenformen mit größer und kleiner werdendem Lupenfenster](docs/monitor-loupe-demo-v14-slow.gif)
+
+*Die Desktop-Szene ist eine Illustration und keine Live-Aufnahme von GNOME.*
+[Statisches PNG-Vorschaubild](docs/monitor-loupe-demo.png)
+
+## Einstellungen im Bild
+
+Die Bilder zeigen die Einstellungsbereiche von Version 16 im Dark Mode unter
+GNOME 51, ohne Fensterkopf und breite Außenränder. Alle Bereiche gehören zur selben Einstellungsseite;
+scrolle im Fenster nach unten, um die weiteren Einstellungen zu sehen.
+Farben und Fensterstil können je nach Desktop abweichen.
+Für die Ansichtsbeispiele ist eine helle Rahmen- und Symbolfarbe gewählt.
+
+**Rechteck — Abmessungen, Rahmendicke und Farbe**
+
+![Rechteck-Einstellungen in Version 16 mit Breite, Höhe, Rahmendicke und Farbauswahl](docs/preferences-appearance-v16-de.png)
+
+Wähle oben eine Form. Beim Rechteck stellst du **Breite** und **Höhe** ein.
+**Rahmendicke** bestimmt die Stärke des sichtbaren Randes; das Farbfeld daneben
+ändert die Farbe von Rahmen, Griff und Symbolen.
+
+**Runde Formen — Radius und Farbe**
+
+![Einstellungen einer runden Lupe in Version 16 mit Radius, Rahmendicke und Farbe](docs/preferences-round-v16-de.png)
+
+Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
+du den Rahmen aller Formen aus. Änderungen an der Ansicht werden sofort übernommen.
+Bei runden Formen ersetzt der **Radius** die Regler für Breite und Höhe.
+Ein größerer Radius bedeutet eine größere Linse; die Vergrößerungsstufe bleibt gleich.
+
+**Mausrad-Steuerung — Zoom und Lupengröße**
+
+![Mausrad-Einstellungen in Version 16 mit getrennten Schaltern für Zoom und Lupengröße](docs/preferences-controls-v16-de.png)
+
+| Funktion | Standardkombination mit Mausrad | Wirkung |
+| --- | --- | --- |
+| Zoom | Strg + Super | Ändert die Vergrößerungsstufe des Inhalts. |
+| Lupengröße | Umschalt + Strg + Super | Ändert den Radius oder skaliert das Rechteck proportional. |
+
+Beide Tastenkombinationen lassen sich über ihren Kürzel-Button ändern:
+anklicken, die gewünschten Zusatztasten gemeinsam drücken und loslassen.
+Der jeweilige Schalter rechts daneben aktiviert oder deaktiviert die Funktion.
+Die gewählten Kürzel bleiben beim Ausschalten erhalten. Bereits für die andere
+Mausrad-Funktion verwendete Kombinationen werden beim Eingeben abgelehnt.
+
+**Tastenkombinationen — Lupe einschalten und Zoom steuern**
+
+![Tastenkombinationen in Version 16 für das Ein- und Ausschalten der Lupe sowie eigene Zoomkürzel](docs/preferences-shortcuts-v16-de.png)
+
+**Lupe ein-/ausschalten** zeigt dein GNOME-Systemkürzel. Klicke auf einen
+Kürzel-Button und drücke eine neue Kombination. **Vergrößern** und **Verkleinern**
+sind eigene, anfangs unbelegte Kürzel für den eingestellten Zoomschritt.
+Rücktaste entfernt ein Kürzel, Escape bricht die Eingabe ab.
+
 ## Bildschirmaufnahmen mit PrintScreen
 
 Mit **Druck / PrintScreen** kannst du den vergrößerten Lupenbereich direkt als
@@ -60,81 +136,6 @@ abmelden und wieder anmelden; den Bildschirm zu sperren reicht nicht.
 
 An Bildschirmrändern wird nur der sichtbare Teil aufgenommen. GNOME übernimmt
 den Speicherort und die Benachrichtigung für das Bildschirmfoto.
-
-## Wähle deine Lupenansicht
-
-| Rechteck | Lupe | Feldstecher | Fernrohr |
-| :---: | :---: | :---: | :---: |
-| ![Rechteck-Symbol](docs/icons/rectangle.svg) | ![Lupen-Symbol](docs/icons/loupe.svg) | ![Feldstecher-Symbol](docs/icons/binoculars.svg) | ![Fernrohr-Symbol](docs/icons/telescope.svg) |
-| Klassische rechteckige Ansicht | Runde Linse mit Griff | Zwei überlappende Linsen | Runde Ansicht mit breitem Rahmen |
-| Breite, Höhe und Rahmendicke | Radius einstellbar | Radius pro Linse einstellbar | Radius einstellbar |
-
-*Die Symbole veranschaulichen die vier Formen; sie sind keine Desktop-Screenshots.*
-
-Die **Rahmen- und Symbolfarbe** sowie die **Rahmendicke** sind für alle vier Ansichten einstellbar.
-Die Lupe passt sich mitsamt Rahmen und Griff an die aktuelle Monitorgrösse an.
-Wähle die Form über eines der **vier Symbolfelder ganz oben in den Einstellungen**.
-Das aktive Feld ist hervorgehoben; darunter erscheinen die passenden Größenregler.
-
-## Die Lupenansichten in Bewegung
-
-Die Animation zeigt, wie die Linse schwungvoll hin und her wandert, dabei
-mehrfach größer und kleiner wird und weich zwischen allen vier Formen wechselt. Mit **Umschalt + Strg + Super +
-Mausrad** lässt sich das Lupenfenster vergrössern und verkleinern: beim Rechteck
-proportional, bei runden Formen über den Radius. Die Vergrößerungsstufe bleibt gleich.
-
-![Animation aller vier Lupenformen mit größer und kleiner werdendem Lupenfenster](docs/monitor-loupe-demo-v14-slow.gif)
-
-*Die Desktop-Szene ist eine Illustration und keine Live-Aufnahme von GNOME.*
-[Statisches PNG-Vorschaubild](docs/monitor-loupe-demo.png)
-
-## Einstellungen im Bild
-
-Die Bilder zeigen die Einstellungsbereiche von Version 16 unter GNOME 51,
-jeweils einen Bereich. Alle Bereiche gehören zur selben Einstellungsseite;
-scrolle im Fenster nach unten, um die weiteren Einstellungen zu sehen.
-Farben und Fensterstil können je nach Desktop abweichen.
-
-**Rechteck — Abmessungen, Rahmendicke und Farbe**
-
-![Rechteck-Einstellungen in Version 16 mit Breite, Höhe, Rahmendicke und Farbauswahl](docs/preferences-appearance-v16-de.png)
-
-Wähle oben eine Form. Beim Rechteck stellst du **Breite** und **Höhe** ein.
-**Rahmendicke** bestimmt die Stärke des sichtbaren Randes; das Farbfeld daneben
-ändert die Farbe von Rahmen, Griff und Symbolen.
-
-**Runde Formen — Radius und Farbe**
-
-![Einstellungen einer runden Lupe in Version 16 mit Radius, Rahmendicke und Farbe](docs/preferences-round-v16-de.png)
-
-Klicke auf das Farbfeld, um eine Farbe auszuwählen. Mit Rahmendicke **0** blendest
-du den Rahmen aller Formen aus. Änderungen an der Ansicht werden sofort übernommen.
-Bei runden Formen ersetzt der **Radius** die Regler für Breite und Höhe.
-Ein größerer Radius bedeutet eine größere Linse; die Vergrößerungsstufe bleibt gleich.
-
-**Mausrad-Steuerung — Zoom und Lupengröße**
-
-![Mausrad-Einstellungen in Version 16 mit getrennten Schaltern für Zoom und Lupengröße](docs/preferences-controls-v16-de.png)
-
-| Funktion | Standardkombination mit Mausrad | Wirkung |
-| --- | --- | --- |
-| Zoom | Strg + Super | Ändert die Vergrößerungsstufe des Inhalts. |
-| Lupengröße | Umschalt + Strg + Super | Ändert den Radius oder skaliert das Rechteck proportional. |
-
-Beide Tastenkombinationen lassen sich über ihren Kürzel-Button ändern:
-anklicken, die gewünschten Zusatztasten gemeinsam drücken und loslassen.
-Der jeweilige Schalter rechts daneben aktiviert oder deaktiviert die Funktion.
-Die gewählten Kürzel bleiben beim Ausschalten erhalten. Bereits für die andere
-Mausrad-Funktion verwendete Kombinationen werden beim Eingeben abgelehnt.
-
-**Tastenkombinationen — Lupe einschalten und Zoom steuern**
-
-![Tastenkombinationen in Version 16 für das Ein- und Ausschalten der Lupe sowie eigene Zoomkürzel](docs/preferences-shortcuts-v16-de.png)
-
-**Lupe ein-/ausschalten** zeigt dein GNOME-Systemkürzel. Klicke auf einen
-Kürzel-Button und drücke eine neue Kombination. **Vergrößern** und **Verkleinern**
-sind eigene, anfangs unbelegte Kürzel für den eingestellten Zoomschritt.
-Rücktaste entfernt ein Kürzel, Escape bricht die Eingabe ab.
 
 ## Einstellungen
 

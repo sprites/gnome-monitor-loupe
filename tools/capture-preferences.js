@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Render the actual preferences widgets, one group per image, without changing
+// Render dark preferences, cropped to one group without window chrome, without changing
 // saved settings. Run in a GNOME GTK session with GJS and GNOME's prefs resource:
 // LANG=de_DE.UTF-8 gjs -m tools/capture-preferences.js screenshots EXTENSION_DIR OUTPUT_DIR
 // Modes: appearance, round, controls, screenshots, shortcuts. Use en_US.UTF-8 for English.
@@ -8,6 +8,7 @@
 import Adw from 'gi://Adw?version=1';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import Graphene from 'gi://Graphene';
 import Gtk from 'gi://Gtk?version=4.0';
 
 GLib.setenv('GSETTINGS_BACKEND', 'memory', true);
@@ -26,6 +27,8 @@ const prefs = new Preferences(metadata);
 ExtensionPreferences.lookupByUUID = uuid => uuid === metadata.uuid ? prefs : null;
 const settings = prefs.getSettings();
 settings.set_boolean('screenshot-lens', true);
+// A light example frame color keeps all four symbols legible on dark cards.
+settings.set_string('frame-color', '#d8dee9');
 if (mode === 'round')
     settings.set_string('lens-shape', 'loupe');
 const lang = (GLib.getenv('LANG') ?? 'en').startsWith('de') ? 'de' : 'en';
@@ -33,7 +36,7 @@ let failure = null;
 const app = new Adw.Application({application_id: 'io.github.sprites.MonitorLoupe.Docs',
     flags: Gio.ApplicationFlags.NON_UNIQUE});
 app.connect('activate', () => {
-    Adw.StyleManager.get_default().color_scheme = Adw.ColorScheme.FORCE_LIGHT;
+    Adw.StyleManager.get_default().color_scheme = Adw.ColorScheme.FORCE_DARK;
     const window = new Adw.PreferencesWindow({application: app, title: `Monitor Loupe ${metadata.version}`});
     prefs.fillPreferencesWindow(window);
     const page = window.visible_page;
@@ -58,7 +61,15 @@ app.connect('activate', () => {
             const snapshot = new Gtk.Snapshot();
             paintable.snapshot(snapshot, window.get_width(), window.get_height());
             const node = snapshot.to_node();
-            const texture = window.get_renderer().render_texture(node, null);
+            const [valid, bounds] = groups[index].compute_bounds(window);
+            if (!valid)
+                throw new Error('Could not determine the settings section bounds');
+            // Keep a little room for card shadows, while dropping the title bar
+            // and the page's wide outer margins. Retain the dark page background.
+            const viewport = new Graphene.Rect();
+            viewport.init(bounds.get_x() - 8, bounds.get_y() - 8,
+                bounds.get_width() + 16, bounds.get_height() + 16);
+            const texture = window.get_renderer().render_texture(node, viewport);
             const output = `${outputDir}/preferences-${mode}-v${metadata.version}-${lang}.png`;
             if (!texture.save_to_png(output))
                 throw new Error(`Could not save ${output}`);

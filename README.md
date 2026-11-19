@@ -8,6 +8,93 @@ At monitor transitions the lens can extend onto a neighboring display.
 
 [PrintScreen captures](#take-screenshots-with-printscreen) · [Settings in pictures](#settings-in-pictures) · [Installation](#installation)
 
+## Choose your lens
+
+| Rectangle | Magnifier | Binoculars | Telescope |
+| :---: | :---: | :---: | :---: |
+| ![Rectangle icon](docs/icons/rectangle.svg) | ![Magnifier icon](docs/icons/loupe.svg) | ![Binoculars icon](docs/icons/binoculars.svg) | ![Telescope icon](docs/icons/telescope.svg) |
+| Classic rectangular view | Round lens with a handle | Two overlapping lenses | Round view with a broad rim |
+| Width, height and frame thickness | Adjustable radius | Adjustable radius per lens | Adjustable radius |
+
+*Symbols illustrate the four shapes; they are not desktop screenshots.*
+
+Choose a **frame and symbol color** for all four views. The lens follows your
+pointer and scales down to fit the current monitor, including its frame and handle.
+Select a shape by clicking one of the **four illustrated tiles at the top of the
+preferences**. The selected tile is highlighted; the matching size controls appear below.
+
+## See the views in motion
+
+The animation shows the lens swooping back and forth while repeatedly growing
+and shrinking, with smooth transitions between all four shapes. **Shift + Ctrl + Super + scroll wheel** enlarges
+and shrinks the lens window: rectangles scale proportionally, while round shapes
+change their radius. Content magnification stays unchanged.
+
+![Animated preview of all four lens shapes with the lens window growing and shrinking](docs/monitor-loupe-demo-v14-slow.gif)
+
+*The desktop scene is an illustration, not a capture of a live GNOME session.*
+[Static PNG preview](docs/monitor-loupe-demo.png)
+
+## Why Monitor Loupe
+
+Monitor Loupe is designed for people who work with large or multiple displays:
+
+- **Four adjustable shapes:** set width and height for the rectangle or the
+  radius for round lenses. Choose the frame color and thickness for every shape.
+- **True multi-monitor behavior:** the lens follows the pointer to the monitor
+  it is currently on, including mixed layouts and different display sizes.
+- **Pointer-centered at screen edges:** the lens stays centered on the pointer;
+  GNOME clips the invisible portion at physical desktop edges. At monitor
+  transitions, the lens can extend onto the neighboring display.
+
+## Settings in pictures
+
+These images show Version 16’s preferences in dark mode under GNOME 51, one
+section at a time, cropped without the window title bar or wide outer margins.
+All sections are on the same preferences page; scroll down in the window to see
+the remaining controls. Colors and window styling may vary with your desktop.
+The appearance examples use a light frame and symbol color for contrast.
+
+**Rectangle — dimensions, frame thickness and color**
+
+![Version 16 rectangle preferences with width, height, frame thickness and color](docs/preferences-appearance-v16-en.png)
+
+Choose a shape at the top. For the rectangle, set **Width** and **Height**.
+**Frame thickness** controls the visible border; the color swatch changes the
+color of the frame, handle, and symbols.
+
+**Round shapes — radius and color**
+
+![Version 16 round magnifier preferences with radius, frame thickness and color](docs/preferences-round-v16-en.png)
+
+Click the color swatch to choose a color. Set frame thickness to **0**
+to hide the border on every shape. Appearance changes apply immediately.
+For round shapes, **Radius** replaces the width and height controls.
+A larger radius gives you a larger lens without changing the magnification.
+
+**Scroll-wheel controls — zoom and lens size**
+
+![Version 16 scroll-wheel settings with separate switches for zoom and lens size](docs/preferences-controls-v16-en.png)
+
+| Function | Default modifiers with the scroll wheel | Effect |
+| --- | --- | --- |
+| Zoom | Ctrl + Super | Changes the magnification of the content. |
+| Lens size | Shift + Ctrl + Super | Changes the radius or scales the rectangle proportionally. |
+
+To edit either combination, click its shortcut button, press the modifier keys
+together, then release them. Each adjacent switch enables or disables its
+function while preserving the chosen shortcut. A combination already assigned
+to the other scroll-wheel function is rejected when entering a new shortcut.
+
+**Keyboard shortcuts — switch the magnifier on and control zoom**
+
+![Version 16 keyboard shortcuts for toggling the magnifier and assigning zoom shortcuts](docs/preferences-shortcuts-v16-en.png)
+
+**Toggle magnifier** shows your GNOME system shortcut. Click a shortcut button
+and press a new combination. **Zoom in** and **Zoom out** are separate, initially
+unset shortcuts that use your chosen zoom step. Backspace clears a shortcut;
+Escape cancels the edit.
+
 ## Take screenshots with PrintScreen
 
 Press **PrintScreen** to capture the magnified lens area directly as a PNG,
@@ -58,91 +145,6 @@ in to load the new code; locking the screen is not enough.
 
 At desktop edges, only the visible part is captured. GNOME handles the save
 location and screenshot notification.
-
-## Choose your lens
-
-| Rectangle | Magnifier | Binoculars | Telescope |
-| :---: | :---: | :---: | :---: |
-| ![Rectangle icon](docs/icons/rectangle.svg) | ![Magnifier icon](docs/icons/loupe.svg) | ![Binoculars icon](docs/icons/binoculars.svg) | ![Telescope icon](docs/icons/telescope.svg) |
-| Classic rectangular view | Round lens with a handle | Two overlapping lenses | Round view with a broad rim |
-| Width, height and frame thickness | Adjustable radius | Adjustable radius per lens | Adjustable radius |
-
-*Symbols illustrate the four shapes; they are not desktop screenshots.*
-
-Choose a **frame and symbol color** for all four views. The lens follows your
-pointer and scales down to fit the current monitor, including its frame and handle.
-Select a shape by clicking one of the **four illustrated tiles at the top of the
-preferences**. The selected tile is highlighted; the matching size controls appear below.
-
-## See the views in motion
-
-The animation shows the lens swooping back and forth while repeatedly growing
-and shrinking, with smooth transitions between all four shapes. **Shift + Ctrl + Super + scroll wheel** enlarges
-and shrinks the lens window: rectangles scale proportionally, while round shapes
-change their radius. Content magnification stays unchanged.
-
-![Animated preview of all four lens shapes with the lens window growing and shrinking](docs/monitor-loupe-demo-v14-slow.gif)
-
-*The desktop scene is an illustration, not a capture of a live GNOME session.*
-[Static PNG preview](docs/monitor-loupe-demo.png)
-
-## Why Monitor Loupe
-
-Monitor Loupe is designed for people who work with large or multiple displays:
-
-- **Four adjustable shapes:** set width and height for the rectangle or the
-  radius for round lenses. Choose the frame color and thickness for every shape.
-- **True multi-monitor behavior:** the lens follows the pointer to the monitor
-  it is currently on, including mixed layouts and different display sizes.
-- **Pointer-centered at screen edges:** the lens stays centered on the pointer;
-  GNOME clips the invisible portion at physical desktop edges. At monitor
-  transitions, the lens can extend onto the neighboring display.
-
-## Settings in pictures
-
-These images show Version 16’s preferences under GNOME 51, one section at a time.
-All sections are on the same preferences page; scroll down in the window to see
-the remaining controls. Colors and window styling may vary with your desktop.
-
-**Rectangle — dimensions, frame thickness and color**
-
-![Version 16 rectangle preferences with width, height, frame thickness and color](docs/preferences-appearance-v16-en.png)
-
-Choose a shape at the top. For the rectangle, set **Width** and **Height**.
-**Frame thickness** controls the visible border; the color swatch changes the
-color of the frame, handle, and symbols.
-
-**Round shapes — radius and color**
-
-![Version 16 round magnifier preferences with radius, frame thickness and color](docs/preferences-round-v16-en.png)
-
-Click the color swatch to choose a color. Set frame thickness to **0**
-to hide the border on every shape. Appearance changes apply immediately.
-For round shapes, **Radius** replaces the width and height controls.
-A larger radius gives you a larger lens without changing the magnification.
-
-**Scroll-wheel controls — zoom and lens size**
-
-![Version 16 scroll-wheel settings with separate switches for zoom and lens size](docs/preferences-controls-v16-en.png)
-
-| Function | Default modifiers with the scroll wheel | Effect |
-| --- | --- | --- |
-| Zoom | Ctrl + Super | Changes the magnification of the content. |
-| Lens size | Shift + Ctrl + Super | Changes the radius or scales the rectangle proportionally. |
-
-To edit either combination, click its shortcut button, press the modifier keys
-together, then release them. Each adjacent switch enables or disables its
-function while preserving the chosen shortcut. A combination already assigned
-to the other scroll-wheel function is rejected when entering a new shortcut.
-
-**Keyboard shortcuts — switch the magnifier on and control zoom**
-
-![Version 16 keyboard shortcuts for toggling the magnifier and assigning zoom shortcuts](docs/preferences-shortcuts-v16-en.png)
-
-**Toggle magnifier** shows your GNOME system shortcut. Click a shortcut button
-and press a new combination. **Zoom in** and **Zoom out** are separate, initially
-unset shortcuts that use your chosen zoom step. Backspace clears a shortcut;
-Escape cancels the edit.
 
 ## Controls and preferences
 
