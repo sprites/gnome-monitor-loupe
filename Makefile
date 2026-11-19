@@ -3,16 +3,17 @@ UUID = monitor-loupe@sprites.github.io
 .PHONY: test pack release-candidate release-verify clean
 
 test:
-	node --experimental-default-type=module test-geometry.mjs
-	node --experimental-default-type=module test-zoom.mjs
-	node --experimental-default-type=module test-resize.mjs
-	node --experimental-default-type=module test-lifecycle.mjs
+	node test-geometry.mjs
+	node test-zoom.mjs
+	node test-resize.mjs
+	node test-capture.mjs
+	node test-lifecycle.mjs
 	glib-compile-schemas --strict --dry-run schemas
 	msgfmt --check --output-file=/dev/null po/de.po
 
 pack: test
 	mkdir -p dist
-	gnome-extensions pack --force --extra-source=geometry.js --extra-source=zoom.js --extra-source=appearance.js --extra-source=color.js --extra-source=monitor-loupe.svg --extra-source=LICENSE --podir=po --out-dir=dist .
+	gnome-extensions pack --force --extra-source=geometry.js --extra-source=zoom.js --extra-source=appearance.js --extra-source=color.js --extra-source=capture.js --extra-source=monitor-loupe.svg --extra-source=LICENSE --podir=po --out-dir=dist .
 
 release-candidate:
 	python3 tools/release.py candidate

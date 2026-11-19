@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 import Clutter from 'gi://Clutter';
+import Cogl from 'gi://Cogl';
 import Gio from 'gi://Gio';
 import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
@@ -7,8 +8,10 @@ import St from 'gi://St';
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as Screenshot from 'resource:///org/gnome/shell/ui/screenshot.js';
 import {lensGeometry, insideLens, shapeSize, nextLensSize} from './geometry.js';
-import {createLensEffect} from './appearance.js';
+import {createLensEffect, showShutter} from './appearance.js';
+import {capturePlan, maskLenses} from './capture.js';
 import {frameColor} from './color.js';
 import {nextZoom} from './zoom.js';
 
@@ -67,6 +70,7 @@ export default class MonitorLoupe extends Extension {
             });
         this._injections.overrideMethod(region, '_destroyActors', original =>
             function (...args) {
+                extension._restoreScreenshotCursor?.();
                 extension._clearAppearance();
                 return original.apply(this, args);
             });
@@ -103,6 +107,8 @@ export default class MonitorLoupe extends Extension {
             });
         this._injections.overrideMethod(region, '_changeROI', original =>
             function (params = {}) {
+                if (extension._restoreScreenshotCursor)
+                    return;
                 const lens = geometry(params);
                 if (!lens)
                     return original.call(this, params);
@@ -135,12 +141,15 @@ export default class MonitorLoupe extends Extension {
             });
         region._changeROI();
         this._settingsChangedId = this._settings.connect('changed', (_settings, key) => {
+            if (key === 'screenshot-lens')
+                this._syncScreenshotBinding();
             if (['lens-width', 'lens-height', 'lens-shape', 'lens-radius',
                 'frame-color', 'rectangle-border-width'].includes(key))
                 region._changeROI();
             if (!this._resizing)
                 this._scrollRemainder = 0;
         });
+        this._syncScreenshotBinding();
         this._monitorsChangedId = Main.layoutManager.connect('monitors-changed', () =>
             region._changeROI());
         for (const [index, key] of SHORTCUTS.entries()) {
@@ -184,6 +193,135 @@ export default class MonitorLoupe extends Extension {
         preferences.connect('clicked', () => this.openPreferences());
         this._indicator.add_child(preferences);
         Main.panel.addToStatusArea(this.uuid, this._indicator);
+    }
+
+    _syncScreenshotBinding() {
+        const enabled = this._settings.get_boolean('screenshot-lens');
+        if (enabled === Boolean(this._screenshotBinding))
+            return;
+        const modes = Shell.ActionMode.ALL & ~Shell.ActionMode.LOGIN_SCREEN;
+        Main.wm.setCustomKeybindingHandler('show-screenshot-ui', modes,
+            enabled ? () => {
+                if (!(Main.actionMode & (Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW)) ||
+                    !this._region?.isActive()) {
+                    Screenshot.showScreenshotUI();
+                    return;
+                }
+                this._captureLens().catch(error => {
+                    console.error('Monitor Loupe: screenshot failed', error);
+                    if (this._settings)
+                        Main.notifyError(this.gettext('Could not capture the zoom window'), error.message);
+                });
+            } : Screenshot.showScreenshotUI);
+        this._screenshotBinding = enabled;
+    }
+
+    async _captureLens() {
+        if (this._screenshotPending)
+            return;
+        const region = this._region;
+        const viewport = {x: region._viewPortX, y: region._viewPortY,
+            width: region._viewPortWidth, height: region._viewPortHeight};
+        const shape = this._settings.get_string('lens-shape');
+        const decorated = this._settings.get_boolean('screenshot-decoration');
+        const transparent = this._settings.get_boolean('screenshot-transparent');
+        const border = this._settings.get_int('rectangle-border-width');
+        const plan = capturePlan(viewport, global.stage, shape,
+            border, decorated, transparent);
+        if (!plan)
+            return;
+        const pending = {};
+        this._screenshotPending = pending;
+        // The magnified pointer is a stage actor, separate from the system cursor.
+        const cursors = ['_mouseActor', '_crossHairsActor']
+            .map(key => [key, region[key], region[key]?.visible]);
+        let restored = false;
+        let restoreDecoration = () => {};
+        const restore = () => {
+            if (restored)
+                return;
+            restored = true;
+            restoreDecoration();
+            for (const [key, actor, visible] of cursors) {
+                if (actor && region[key] === actor)
+                    actor.visible = visible;
+            }
+            if (this._restoreScreenshotCursor === restore)
+                this._restoreScreenshotCursor = null;
+        };
+        this._restoreScreenshotCursor = restore;
+        try {
+            // With an opaque background, remove the instrument itself before
+            // snapshotting so its frame/handle cannot remain in the surroundings.
+            if (!transparent && !decorated && shape !== 'rectangle' && this._shapeEffect) {
+                const actor = this._appearanceActor;
+                const original = this._shapeEffect;
+                const [sw, sh] = shapeSize(shape);
+                const radius = Math.max(1, Math.min(viewport.width / sw, viewport.height / sh));
+                const clean = createLensEffect(shape, this._settings.get_string('frame-color'),
+                    0, radius, {includeHandle: false, outerRadius: Math.max(0, 0.96 - border / radius)});
+                actor.remove_effect(original);
+                actor.add_effect(clean);
+                restoreDecoration = () => {
+                    actor.remove_effect(clean);
+                    if (this._shapeEffect === original)
+                        actor.add_effect(original);
+                };
+            }
+            for (const [, actor] of cursors) {
+                if (actor)
+                    actor.visible = false;
+            }
+            const shooter = new Shell.Screenshot();
+            const [content, scale] = await shooter.screenshot_stage_to_content();
+            restore();
+            if (this._screenshotPending !== pending || !region.isActive() ||
+                !(Main.actionMode & (Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW)))
+                return;
+            if (this._settings.get_boolean('screenshot-shutter')) {
+                this._shutter?.destroy();
+                this._shutter = showShutter(viewport, shape);
+                const shutter = this._shutter;
+                shutter.connect('destroy', () => {
+                    if (this._shutter === shutter)
+                        this._shutter = null;
+                });
+            }
+            const geometry = [plan.x, plan.y, plan.width, plan.height]
+                .map(value => Math.round(value * scale));
+            let texture = content.get_texture();
+            let image;
+            if (plan.circles) {
+                const stream = Gio.MemoryOutputStream.new_resizable();
+                let pixbuf;
+                try {
+                    pixbuf = await Shell.Screenshot.composite_to_stream(texture,
+                        ...geometry, scale, null, 0, 0, 1, stream);
+                } finally {
+                    stream.close(null);
+                }
+                const rgba = pixbuf.add_alpha(false, 0, 0, 0);
+                const pixels = maskLenses(new Uint8Array(rgba.get_pixels()),
+                    rgba.width, rgba.height, rgba.rowstride, plan);
+                image = St.ImageContent.new_with_preferred_size(rgba.width, rgba.height);
+                const data = [pixels, Cogl.PixelFormat.RGBA_8888,
+                    rgba.width, rgba.height, rgba.rowstride];
+                // GNOME 51 moved image uploads out of Clutter and requires a context.
+                if (typeof Clutter.Image !== 'function')
+                    data.unshift(global.stage.get_context().get_backend().get_cogl_context());
+                image.set_data(...data);
+                texture = image.get_texture();
+                if (this._screenshotPending !== pending)
+                    return;
+            }
+            // GNOME handles PNG storage, clipboard and the screenshot notification.
+            await Screenshot.captureScreenshot(texture,
+                plan.circles ? null : geometry, plan.circles ? 1 : scale, null);
+        } finally {
+            restore();
+            if (this._screenshotPending === pending)
+                this._screenshotPending = null;
+        }
     }
 
     _updateIndicatorVisibility() {
@@ -328,6 +466,16 @@ export default class MonitorLoupe extends Extension {
     }
 
     disable() {
+        this._shutter?.destroy();
+        this._shutter = null;
+        this._restoreScreenshotCursor?.();
+        this._screenshotPending = null;
+        if (this._screenshotBinding) {
+            Main.wm.setCustomKeybindingHandler('show-screenshot-ui',
+                Shell.ActionMode.ALL & ~Shell.ActionMode.LOGIN_SCREEN,
+                Screenshot.showScreenshotUI);
+        }
+        this._screenshotBinding = false;
         this._indicator?.destroy();
         this._indicator = null;
         if (this._indicatorVisibilityId)

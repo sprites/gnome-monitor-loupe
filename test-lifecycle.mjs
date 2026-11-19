@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import {lensGeometry, insideLens, shapeSize, nextLensSize} from './geometry.js';
 import {nextZoom} from './zoom.js';
 import {frameColor} from './color.js';
+import {capturePlan, maskLenses} from './capture.js';
 
 // Run the real extension against a small Shell boundary, without a live desktop.
 class Signals {
@@ -54,6 +55,9 @@ const settings = new Settings({
     'lens-shape': 'rectangle', 'lens-radius': 300, 'scroll-zoom-modifiers': 9,
     'frame-color': '#242b33', 'rectangle-border-width': 2,
     'scroll-resize': false, 'scroll-resize-modifiers': 13,
+    'screenshot-lens': false,
+    'screenshot-decoration': true, 'screenshot-shutter': false,
+    'screenshot-transparent': true,
 });
 const a11y = new Settings({'screen-magnifier-enabled': false});
 const magnifierSettings = new Settings({'mag-factor': 2});
@@ -61,9 +65,20 @@ const stage = new Signals();
 const layout = new Signals();
 layout.monitors = [{x: 0, y: 0, width: 1920, height: 1080}];
 const keys = new Map();
+let screenshotHandler;
+let snapshot;
+let snapshotCount = 0;
+const captures = [];
+let shutterCount = 0;
+const shutters = [];
+const Screenshot = {
+    showScreenshotUI() { return 'screenshot-ui'; },
+    async captureScreenshot(...args) { captures.push(args); },
+};
 let restoreCount = 0;
 let failROI = false;
 const region = {
+    _magnifier: {hideSystemCursor() {}},
     _xMagFactor: 2, _yMagFactor: 2, _lensMode: true, _clampScrollingAtEdges: true,
     _setViewPort(viewport) {
         this.viewport = viewport;
@@ -96,9 +111,17 @@ const Main = {
         handleWorkspaceScroll: event => { Main.workspaceFallback = event; return 'fallback'; },
         addKeybinding: (key, _settings, _flags, _mode, callback) => keys.set(key, callback),
         removeKeybinding: key => keys.delete(key),
+        setCustomKeybindingHandler: (key, _modes, handler) => {
+            assert.equal(key, 'show-screenshot-ui');
+            screenshotHandler = handler;
+        },
     },
 };
 const Clutter = {
+    Image: class {
+        set_data(pixels) { this.pixels = pixels; }
+        get_texture() { return this.pixels; }
+    },
     EVENT_PROPAGATE: false, EVENT_STOP: true, EventType: {SCROLL: 1},
     ScrollDirection: {UP: 0, DOWN: 1, SMOOTH: 2, LEFT: 3},
     ModifierType: {SUPER_MASK: 1, MOD4_MASK: 2, MOD1_MASK: 4, CONTROL_MASK: 8, SHIFT_MASK: 16},
@@ -106,13 +129,35 @@ const Clutter = {
 const ExtensionClass = vm.runInNewContext(`${source}\nMonitorLoupe;`, {
     Extension: class { getSettings() { return settings; } },
     InjectionManager, lensGeometry, insideLens, shapeSize, nextLensSize, nextZoom, Main, Clutter,
-    frameColor, createLensEffect: (shape, color, borderWidth, radius) => ({shape, color, borderWidth, radius}),
-    Gio: {Settings: class {
+    Screenshot, capturePlan, maskLenses, frameColor,
+    showShutter: () => {
+        shutterCount++;
+        const actor = new Signals();
+        actor.destroy = () => { actor.emit('destroy'); actor.destroyed = true; };
+        shutters.push(actor);
+        return actor;
+    },
+    createLensEffect: (shape, color, borderWidth, radius) => ({shape, color, borderWidth, radius}),
+    Gio: {MemoryOutputStream: {new_resizable: () => ({close() {}})}, Settings: class {
         constructor({schema_id}) {
             return schema_id.endsWith('.applications') ? a11y : magnifierSettings;
         }
     }},
-    Meta: {KeyBindingFlags: {NONE: 0}}, Shell: {ActionMode: {NORMAL: 1, OVERVIEW: 2}},
+    Meta: {KeyBindingFlags: {NONE: 0}}, Shell: {
+        ActionMode: {NORMAL: 1, OVERVIEW: 2, ALL: 255, LOGIN_SCREEN: 128},
+        Screenshot: class {
+            static async composite_to_stream() {
+                return {add_alpha: () => ({width: 20, height: 20, rowstride: 80,
+                    get_pixels: () => new Uint8Array(1600).fill(255)})};
+            }
+            screenshot_stage_to_content() {
+                snapshotCount++;
+                return new Promise((resolve, reject) => { snapshot = {resolve, reject}; });
+            }
+        },
+    },
+    Cogl: {PixelFormat: {RGBA_8888: 1}},
+    St: {ImageContent: {new_with_preferred_size: () => new Clutter.Image()}},
     global: {stage, get_pointer: () => [10, 10]},
 });
 const extension = new ExtensionClass();
@@ -124,6 +169,7 @@ const scroll = (direction, state = 9, dy = 0, dx = 0) => stage.emit('captured-ev
 
 extension.enable();
 assert.equal(keys.size, 2);
+assert.equal(screenshotHandler, undefined, 'Default must leave PrintScreen alone');
 assert.notEqual(Main.wm.handleWorkspaceScroll, Main.wm.handleWorkspaceScroll.__original);
 assert.equal(region.viewport.width, 640);
 assert.equal(region.viewport.x, -310, 'Lens must stay centered while the stage clips its off-screen part');
@@ -339,6 +385,108 @@ assert.equal(keys.size, 0);
 assert.equal(stage.handlers.size, 0);
 assert.equal(extension._settings, null);
 failROI = false;
+// Screenshot binding is opt-in; crop the actual magnified viewport, excluding
+// both cursor layers. Cover asynchronous failure and disable during capture.
+extension.enable();
+settings.values['screenshot-lens'] = true;
+settings.emit('changed', 'screenshot-lens');
+assert.equal(screenshotHandler(), undefined);
+// Inactive magnifier takes the usual GNOME path.
+assert.equal(snapshotCount, 0);
+const inactive = region.isActive;
+region.isActive = () => true;
+settings.values['lens-shape'] = 'rectangle';
+stage.width = 1920;
+stage.height = 1080;
+Object.assign(region, {
+    _viewPortX: -50, _viewPortY: 20, _viewPortWidth: 640, _viewPortHeight: 360,
+    _mouseActor: {visible: true}, _crossHairsActor: {visible: false},
+});
+const texture = {};
+const result = [{get_texture: () => texture}, 2];
+const capturing = extension._captureLens();
+assert.equal(region._mouseActor.visible, false);
+assert.equal(region._crossHairsActor.visible, false);
+const roiBeforeCapture = region.roi;
+region._changeROI();
+assert.equal(region.roi, roiBeforeCapture, 'Freeze lens position while snapshotting');
+await extension._captureLens();
+assert.equal(snapshotCount, 1, 'Repeated PrintScreen must not overlap captures');
+snapshot.resolve(result);
+await capturing;
+assert.equal(region._mouseActor.visible, true);
+assert.equal(region._crossHairsActor.visible, false, 'Preserve originally hidden crosshairs');
+assert.equal(captures[0][0], texture);
+assert.deepEqual(Array.from(captures[0][1]), [0, 40, 1180, 720]);
+assert.equal(captures[0][2], 2);
+assert.equal(captures[0][3], null, 'Do not composite the system cursor');
+
+const failedCapture = extension._captureLens();
+snapshot.reject(new Error('Snapshot failed'));
+await assert.rejects(failedCapture, /Snapshot failed/);
+assert.equal(region._mouseActor.visible, true, 'Restore pointer after failure');
+assert.equal(extension._screenshotPending, null);
+Main.actionMode = 4;
+screenshotHandler();
+assert.equal(snapshotCount, 2, 'Modal and lock screen input must use GNOME');
+Main.actionMode = 1;
+
+settings.values['screenshot-lens'] = false;
+settings.emit('changed', 'screenshot-lens');
+assert.equal(screenshotHandler, Screenshot.showScreenshotUI);
+settings.values['screenshot-lens'] = true;
+settings.emit('changed', 'screenshot-lens');
+const cancelledCapture = extension._captureLens();
+extension.disable();
+assert.equal(region._mouseActor.visible, true, 'Disable restores the cursor immediately');
+assert.equal(screenshotHandler, Screenshot.showScreenshotUI);
+snapshot.resolve(result);
+await cancelledCapture;
+assert.equal(captures.length, 1, 'Disable must cancel pending capture storage');
+extension.enable();
+region._viewPortX = 100;
+region._viewPortY = 100;
+region._viewPortWidth = 520;
+region._viewPortHeight = 520;
+settings.values['lens-shape'] = 'loupe';
+settings.values['screenshot-decoration'] = false;
+settings.values['screenshot-shutter'] = true;
+const glassCapture = extension._captureLens();
+assert.equal(shutterCount, 0, 'Never draw shutter before the snapshot');
+snapshot.resolve(result);
+await glassCapture;
+assert.equal(shutterCount, 1);
+assert.equal(captures.length, 2);
+assert.equal(captures[1][0][3], 0, 'Saved texture has transparent corners');
+assert.equal(captures[1][1], null, 'Masked image is already cropped');
+assert.equal(captures[1][2], 1);
+settings.values['screenshot-transparent'] = false;
+settings.values['screenshot-shutter'] = false;
+settings.emit('changed', 'lens-shape');
+const originalEffect = extension._shapeEffect;
+const captureActor = region._magView;
+assert(originalEffect);
+const withBackground = extension._captureLens();
+assert(!captureActor.effects.has(originalEffect), 'Hide the frame and handle before snapshotting');
+snapshot.resolve(result);
+await withBackground;
+assert(captureActor.effects.has(originalEffect), 'Restore appearance after snapshotting');
+assert.equal(captures[2][0], texture, 'With background, retain the original scene texture');
+assert.notEqual(captures[2][1], null);
+assert.equal(captures[2][2], 2);
+const failedBackground = extension._captureLens();
+snapshot.reject(new Error('Snapshot failed'));
+await assert.rejects(failedBackground, /Snapshot failed/);
+assert(captureActor.effects.has(originalEffect), 'Restore decoration after capture failure');
+extension.disable();
+assert.equal(shutters[0].destroyed, true, 'Disable removes the animation');
+assert.equal(extension._shutter, null);
+settings.values['screenshot-shutter'] = false;
+region.isActive = inactive;
+settings.values['screenshot-lens'] = false;
+extension.enable();
+extension.disable();
+
 const originalAPI = region._setViewPort;
 region._setViewPort = undefined;
 assert.throws(() => extension.enable(), /Unsupported GNOME magnifier API/);

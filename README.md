@@ -93,6 +93,24 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   modifier. Vertical smooth scrolling is accumulated into steps.
 - **Zoom step** is adjustable from 0.05× to 5×. The default adds or subtracts
   0.25× per step; for example, 2× → 2.25×. Maximum magnification is 32×.
+- **Screenshots → Capture zoom window with PrintScreen:** optional, off by
+  default. With the magnifier active, **PrintScreen** saves only the visible
+  magnified viewport, including its frame, without the pointer or crosshairs,
+  and copies the PNG to the clipboard. Uses GNOME's screenshot UI shortcut,
+  including any customization of that shortcut. With the magnifier inactive,
+  GNOME's normal screenshot UI opens. At desktop edges, only the visible part
+  is captured. **Include frame and handle** is on by default. Turn it off to
+  crop the rectangle to its contents, or save just the circular glass of the
+  magnifier/telescope or the two overlapping binocular lenses; the frame and handle are omitted.
+  With decorations on, the image includes the instrument with its frame and
+  handle. **Transparent background** independently controls the surroundings:
+  on makes the area outside the shape transparent in the PNG and clipboard image;
+  off keeps the visible desktop background
+  in the rectangular PNG. Transparency is enabled by default.
+  The **camera shutter effect** automatically closes
+  and opens an aperture for about 0.36 seconds after capture and never appears
+  in the saved image.
+  GNOME handles the save location and notification.
 - **Scroll-wheel lens size:** defaults to **Shift + Ctrl + Super + scroll wheel**.
   Scroll up to enlarge the lens and down to shrink it. Round shapes change their
   radius; rectangles scale width and height together to preserve their aspect ratio.
@@ -175,7 +193,7 @@ pointer alignment, configurable dimensions, fractional zoom steps, input handlin
 and extension cleanup. Lifecycle tests use a simulated Shell boundary and do not
 replace testing on a real GNOME desktop.
 
-Version 15 declares support for **GNOME Shell 48, 49, 50 and 51**.
+Version 16 declares support for **GNOME Shell 48, 49, 50 and 51**.
 Isolated Wayland VM tests on GNOME 48.0, 49.1, 50.0 and 51.0 cover loading,
 shape changes and repeated enable/disable. The GNOME 51 shader adaptation was
 verified on GNOME 50.0 and 51.0, including visual inspection of the round shapes

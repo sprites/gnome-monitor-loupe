@@ -53,6 +53,22 @@
       <range min="1" max="15"/>
       <summary>Lens resize modifiers: Ctrl=1, Alt=2, Shift=4, Super=8</summary>
     </key>
+    <key name="screenshot-lens" type="b">
+      <default>false</default>
+      <summary>Use the GNOME screenshot UI shortcut to capture only the active lens without a pointer</summary>
+    </key>
+    <key name="screenshot-decoration" type="b">
+      <default>true</default>
+      <summary>Include the magnifier frame and handle in screenshots</summary>
+    </key>
+    <key name="screenshot-shutter" type="b">
+      <default>true</default>
+      <summary>Show a brief aperture shutter animation after capturing the lens</summary>
+    </key>
+    <key name="screenshot-transparent" type="b">
+      <default>true</default>
+      <summary>Make the area outside the lens or instrument transparent in PNG screenshots</summary>
+    </key>
     <key name="zoom-step" type="d">
       <default>0.25</default>
       <range min="0.05" max="5.0"/>

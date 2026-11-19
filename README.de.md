@@ -84,6 +84,26 @@ gnome-extensions prefs monitor-loupe@sprites.github.io
   auch über Anwendungsfenstern.
 - **Zoomschritt:** standardmäßig 0,25×, einstellbar von 0,05× bis 5×.
   Beispiel: 2× → 2,25×. Die maximale Vergrößerung ist 32×.
+- **Bildschirmaufnahmen → Lupenfenster mit Druck aufnehmen:** optional und
+  standardmäßig ausgeschaltet. Bei aktiver Lupe speichert **Druck / PrintScreen**
+  nur den sichtbaren, vergrößerten Lupenausschnitt einschließlich Rahmen,
+  ohne Mauszeiger und Fadenkreuz, als PNG und kopiert ihn in die Zwischenablage.
+  Verwendet das GNOME-Kürzel für die Bildschirmfoto-Auswahl; ein dort geändertes
+  Kürzel gilt auch hier. Ohne aktive Lupe öffnet sich die normale GNOME-Auswahl.
+  An Bildschirmrändern wird nur der sichtbare Teil aufgenommen.
+  **Rahmen und Griff mit aufnehmen** ist standardmäßig eingeschaltet. Wird der
+  Schalter ausgeschaltet, enthält das Rechteck nur den Bildinhalt ohne Rahmen;
+  Lupe und Fernrohr werden als Kreis, der Feldstecher als zwei überlappende Linsen
+  aufgenommen; Rahmen und Griff entfallen. Mit eingeschaltetem Schalter bleibt das Instrument
+  samt Rahmen und Griff erhalten. **Transparenter Hintergrund** steuert unabhängig
+  davon die Umgebung: eingeschaltet wird sie im PNG und in der Zwischenablage
+  außerhalb der Form transparent,
+  ausgeschaltet bleibt der sichtbare Desktop-Hintergrund im rechteckigen PNG
+  erhalten. Transparenz ist standardmäßig eingeschaltet.
+  Der **Kamera-Blendenverschluss** zeigt nach dem Auslösen automatisch für etwa
+  0,36 Sekunden eine sich schließende und wieder öffnende Blende. Der Effekt
+  erscheint nicht in der Aufnahme.
+  GNOME übernimmt Speicherort und Benachrichtigung.
 - **Lupengröße per Mausrad:** standardmäßig **Umschalt + Strg + Super + Mausrad**.
   Nach oben vergrößert die Linse, nach unten verkleinert sie. Runde Formen ändern
   den Radius; beim Rechteck werden Breite und Höhe proportional skaliert.
@@ -160,7 +180,7 @@ Der abgestimmte Ablauf für GNOME- und GitHub-Releases steht in der
 das GNOME-Upload-Paket mit der nächsten Nummer, ohne die Versionsnummer auf
 GitHub oder lokal vorwegzunehmen.
 
-Version 15 ist für **GNOME Shell 48, 49, 50 und 51** freigegeben.
+Version 16 ist für **GNOME Shell 48, 49, 50 und 51** freigegeben.
 Isolierte Wayland-VM-Tests auf GNOME 48.0, 49.1, 50.0 und 51.0 prüfen Laden,
 Formwechsel und wiederholtes Deaktivieren/Aktivieren. Die Shader-Anpassung für
 GNOME 51 wurde unter GNOME 50.0 und 51.0 geprüft, einschließlich einer Bildprüfung

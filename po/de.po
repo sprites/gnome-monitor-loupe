@@ -147,3 +147,27 @@ msgstr "Strg, Alt oder Super zusammen mit einer Taste verwenden."
 
 msgid "Already used by:"
 msgstr "Bereits verwendet von:"
+
+msgid "Screenshots"
+msgstr "Bildschirmaufnahmen"
+
+msgid "Capture zoom window with PrintScreen"
+msgstr "Lupenfenster mit Druck aufnehmen"
+
+msgid "When the magnifier is active, the GNOME screenshot shortcut (usually PrintScreen) captures only the visible zoom window without the pointer. Saves a PNG and copies it to the clipboard."
+msgstr "Bei aktiver Lupe nimmt das GNOME-Bildschirmfoto-Kürzel (normalerweise Druck) nur das sichtbare Lupenfenster ohne Mauszeiger auf. Speichert ein PNG und kopiert es in die Zwischenablage."
+
+msgid "Could not capture the zoom window"
+msgstr "Lupenfenster konnte nicht aufgenommen werden"
+
+msgid "Include frame and handle"
+msgstr "Rahmen und Griff mit aufnehmen"
+
+msgid "On: lens, frame and handle. Off: only the glass."
+msgstr "Ein: Linse, Rahmen und Griff. Aus: nur der Bildinhalt."
+
+msgid "Transparent background"
+msgstr "Transparenter Hintergrund"
+
+msgid "On: remove the area outside the lens or instrument. Off: keep the visible desktop background in the rectangular PNG."
+msgstr "Ein: Bereich außerhalb der Linse oder des Instruments entfernen. Aus: sichtbaren Desktop-Hintergrund im rechteckigen PNG erhalten."

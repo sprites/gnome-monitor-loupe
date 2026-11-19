@@ -178,6 +178,29 @@ export default class MonitorLoupePreferences extends ExtensionPreferences {
         const step = this._spin(zoom, settings, 'zoom-step', _('Zoom step'), 0.05, 5, 0.05, 2);
         step.subtitle = _('Added per step: 0.25 means 2× → 2.25×. Zooming out to 1× turns the lens off. Maximum: 32×.');
 
+        const screenshots = new Adw.PreferencesGroup({title: _('Screenshots')});
+        page.add(screenshots);
+        const screenshot = new Adw.SwitchRow({
+            title: _('Capture zoom window with PrintScreen'),
+            subtitle: _('When the magnifier is active, the GNOME screenshot shortcut (usually PrintScreen) captures only the visible zoom window without the pointer. Saves a PNG and copies it to the clipboard.'),
+        });
+        settings.bind('screenshot-lens', screenshot, 'active', Gio.SettingsBindFlags.DEFAULT);
+        screenshots.add(screenshot);
+        const decoration = new Adw.SwitchRow({
+            title: _('Include frame and handle'),
+            subtitle: _('On: lens, frame and handle. Off: only the glass.'),
+        });
+        settings.bind('screenshot-decoration', decoration, 'active', Gio.SettingsBindFlags.DEFAULT);
+        settings.bind('screenshot-lens', decoration, 'sensitive', Gio.SettingsBindFlags.GET);
+        screenshots.add(decoration);
+        const transparent = new Adw.SwitchRow({
+            title: _('Transparent background'),
+            subtitle: _('On: remove the area outside the lens or instrument. Off: keep the visible desktop background in the rectangular PNG.'),
+        });
+        settings.bind('screenshot-transparent', transparent, 'active', Gio.SettingsBindFlags.DEFAULT);
+        settings.bind('screenshot-lens', transparent, 'sensitive', Gio.SettingsBindFlags.GET);
+        screenshots.add(transparent);
+
         const shortcuts = new Adw.PreferencesGroup({
             title: _('Keyboard shortcuts'),
             description: _('Click a shortcut and press the new combination. Backspace disables it; Escape cancels.'),
